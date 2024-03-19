@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JobBoard.Models
+namespace JobBoard.Models.Data
 {
     public class UserDataModel
     {
@@ -9,9 +9,9 @@ namespace JobBoard.Models
 
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
-        public bool CompanyUser { get; set; } 
-        public DateTime LogOnDate { get; set;} 
+        public bool CompanyUser { get; set; }
+        public DateTime LogOnDate { get; set; }
         public bool Deleted { get; set; } = false;
-        public DateTime? DeleteDate { get; set;}
+        public DateTime? DeleteDate { get; set; }
     }
 }

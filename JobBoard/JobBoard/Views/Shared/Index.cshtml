@@ -1,4 +1,6 @@
-﻿@{
+﻿@model JobBoard.Models.UserLogInModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -15,13 +17,24 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
-                    <li>
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="LogIn">Log In</a>
 
-                    </li>
-                    <li>
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="LogOn">Log On</a>
-                    </li>
+                    @{
+                        if (Model.Id == 0)
+                        {
+                            <li class="nav-item">
+                                <a class ="nav-link text-dark" asp-area = "" asp-controller = "User" asp-action = "LogIn"> Log In </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class ="nav-link text-dark" asp-area = "" asp-controller = "User" asp-action = "LogOn"> Log On </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                @Model.Email
+                            </li>
+                        }
+                    }
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
