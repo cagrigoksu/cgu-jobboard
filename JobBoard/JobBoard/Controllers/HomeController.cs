@@ -1,6 +1,8 @@
 using JobBoard.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using JobBoard.DataContexts;
+using JobBoard.Services;
 
 namespace JobBoard.Controllers
 {
@@ -18,20 +20,42 @@ namespace JobBoard.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Index(string email, string pwd)
-        {
-            return Redirect("/");
-        }
 
         public IActionResult LogIn()
         {
             return View();
         }
 
+        [HttpPost]
+        public IActionResult LogIn(string email, string pwd)
+        {
+            return Redirect("/");
+        }
+
         public IActionResult LogOn()
         {
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult LogOn(IFormCollection formCollection)
+        {
+            UserDataModel user = new()
+            {
+                Email = formCollection["email"],
+                Password = formCollection["pwd"],
+                CompanyUser = formCollection["hiring"] == "on"
+            };
+
+            if (user.Password == formCollection["pwdConf"])
+            {
+                return Redirect("/");
+            }
+            else
+            {
+                return View("LogOn");
+            }
+            
         }
 
         public IActionResult Privacy()

@@ -4,7 +4,16 @@
 @{
 }
 <h1> Log On </h1>
-<input placeholder="e-mail" autocomplete="off" type="email" name="email">
-<input placeholder="password" autocomplete="off" type="password" name="pwd">
-<input placeholder="confirm password" autocomplete="off" type="password" name="pwd_conf">
-<input type="submit" name="Log On">
+@* <form method="post" asp-controller="Home" asp-action="LogOn"> *@
+    @using (Html.BeginForm("LogOn", "Home", FormMethod.Post))
+    {
+        <input placeholder="e-mail" autocomplete="off" type="email" name="email" required>
+        <input placeholder="password" autocomplete="off" type="password" name="pwd" required>
+        <input placeholder="confirm password" autocomplete="off" type="password" name="pwdConf" required>
+        <input type="checkbox" id="hiring" name="hiring" />
+        <label for="hiring">I am HR at a company.</label>
+        <input type="submit" value="Log On">
+    }
+
+@* </form> *@
+

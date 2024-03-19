@@ -1,7 +1,15 @@
+using JobBoard.DataContexts;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+var Configuration = builder.Configuration;
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
 
 var app = builder.Build();
 
