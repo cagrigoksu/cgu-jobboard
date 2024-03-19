@@ -1,4 +1,6 @@
-﻿@model JobBoard.Models.UserLogInModel
+﻿@model JobBoard.Models.IndexModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Home Page";
@@ -19,7 +21,25 @@
                     </li>
 
                     @{
-                        if (Model.Id == 0)
+                        @* if (Model.Id == 0) *@
+                        @* { *@
+                        @*     <li class="nav-item"> *@
+                        @*         <a class ="nav-link text-dark" asp-area = "" asp-controller = "User" asp-action = "LogIn"> Log In </a> *@
+                        @*     </li> *@
+                        @*     <li class="nav-item"> *@
+                        @*         <a class ="nav-link text-dark" asp-area = "" asp-controller = "User" asp-action = "LogOn"> Log On </a> *@
+                        @*     </li> *@
+                        @* } *@
+                        @* else *@
+                        @* { *@
+                        @*     <li> *@
+                        @*         @Model.Id *@
+                        @*     </li> *@
+                        @*     <li> *@
+                        @*         @Model.Email *@
+                        @*     </li> *@
+                        @* } *@
+                        if (HttpContextAccessor?.HttpContext?.Session.GetString("Id") == null)
                         {
                             <li class="nav-item">
                                 <a class ="nav-link text-dark" asp-area = "" asp-controller = "User" asp-action = "LogIn"> Log In </a>
@@ -31,7 +51,13 @@
                         else
                         {
                             <li>
-                                @Model.Email
+                                @HttpContextAccessor?.HttpContext?.Session.GetString("Id")
+                            </li>
+                            <li>
+                                @HttpContextAccessor?.HttpContext?.Session.GetString("Email")
+                            </li>
+                            <li>
+                                <a class="nav-item text-dark" asp-controller="User" asp-action="LogOut">Log Out</a>
                             </li>
                         }
                     }

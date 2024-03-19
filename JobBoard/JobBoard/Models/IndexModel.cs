@@ -1,6 +1,6 @@
 ﻿namespace JobBoard.Models
 {
-    public class UserLogInModel
+    public class IndexModel
     {
         public int Id { get; set; }
         public string Email { get; set; }

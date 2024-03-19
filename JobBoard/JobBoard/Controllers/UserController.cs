@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using JobBoard.DataContexts;
 using JobBoard.Models;
 using JobBoard.Models.Data;
+using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 
 namespace JobBoard.Controllers
 {
@@ -33,11 +34,16 @@ namespace JobBoard.Controllers
                 FirstOrDefault(x => x.Email == email && x.Password == pwd);
             if (user != null)
             {
-                var userModel = new UserLogInModel();
+                HttpContext.Session.SetString("Id", user.Id.ToString());
+                HttpContext.Session.SetString("Email", user.Email);
 
-                userModel.Id = user.Id;
-                userModel.Email = user.Email;
-                userModel.CompanyUser = user.CompanyUser;
+                var userModel = new Models.IndexModel
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    CompanyUser = user.CompanyUser
+                };
+
                 return View("Index", userModel);
             }
             else
@@ -74,7 +80,14 @@ namespace JobBoard.Controllers
             {
                 return View("Index");
             }
+        }
 
+        public IActionResult LogOut()
+        {
+            HttpContext.Session.Remove("Id");
+            HttpContext.Session.Remove("Email");
+
+            return View("Index");
         }
 
         // // GET: User

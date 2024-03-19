@@ -1,7 +1,6 @@
 using JobBoard.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using JobBoard.DataContexts;
 
 namespace JobBoard.Controllers
 {
@@ -16,7 +15,7 @@ namespace JobBoard.Controllers
 
         public IActionResult Index()
         {
-            return View(new UserLogInModel());
+            return View(new IndexModel());
         }
 
         public IActionResult Privacy()
