@@ -8,20 +8,19 @@
 
 <h1>Your Posted Jobs</h1>
 
+<input type="button" value="Post a New Job" onclick="@("window.location.href='" + @Url.Action("AddJobPost", "Poster") + "'");"/>
+
 <table class="table">
     <thead>
     <tr>
         <th>
+            @Html.DisplayNameFor(model => model.Id)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Title)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.PostDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CompanyId)
         </th>
         <th></th>
     </tr>
@@ -30,16 +29,18 @@
     @foreach (var item in Model) {
         <tr>
             <td>
-                    @Html.DisplayFor(modelItem => item.Title)
+                    @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => item.Description)
+                    @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
                     @Html.DisplayFor(modelItem => item.PostDate)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => item.CompanyId)
+                <a asp-action="" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="DeleteJobPost" asp-controller="Poster" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
     }

@@ -1,0 +1,18 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model JobBoard.Models.Data.JobPostDataModel
+
+<h1> New Job Post </h1>
+@* <form method="post" asp-controller="Home" asp-action="LogOn"> *@
+@using (Html.BeginForm("AddJobPost", "Poster", FormMethod.Post))
+{
+    <div>
+        <input placeholder="Job Title" autocomplete="off" type="text" name="title" asp-for="Title" required>
+        <textarea asp-for="Description" rows="4" cols="50"></textarea>
+        <input type="submit" value="Save">
+    </div>
+
+}

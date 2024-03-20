@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace JobBoard.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240319181709_UsersCreate")]
-    partial class UsersCreate
+    [Migration("20240320210204_UserTable")]
+    partial class UserTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace JobBoard.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("JobBoard.Models.UserDataModel", b =>
+            modelBuilder.Entity("JobBoard.Models.Data.UserDataModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,7 +37,7 @@ namespace JobBoard.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DeleteDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("boolean");
@@ -47,7 +47,7 @@ namespace JobBoard.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("LogOnDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Password")
                         .IsRequired()

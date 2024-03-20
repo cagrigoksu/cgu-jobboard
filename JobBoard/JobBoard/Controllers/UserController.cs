@@ -20,7 +20,7 @@ namespace JobBoard.Controllers
         {
             _context = context;
         }
-
+        
         public IActionResult LogIn()
         {
             return View();
@@ -85,10 +85,11 @@ namespace JobBoard.Controllers
 
         public IActionResult LogOut()
         {
-            HttpContext.Session.Remove("Id");
-            HttpContext.Session.Remove("Email");
+            // HttpContext.Session.Remove("Id");
+            // HttpContext.Session.Remove("Email");
+            HttpContext.Session.Clear();
 
-            return View("Index");
+            return View("LogIn");
         }
 
         // // GET: User

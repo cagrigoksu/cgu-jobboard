@@ -1,5 +1,7 @@
 using JobBoard.Models;
+using JobBoard.Models.Classes;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace JobBoard.Controllers
@@ -12,9 +14,13 @@ namespace JobBoard.Controllers
         {
             _logger = logger;
         }
-
+        
         public IActionResult Index()
         {
+            if (new SessionUtils().EmptySession())
+            {
+                return View("LogIn");
+            }
             return View(new IndexModel());
         }
 

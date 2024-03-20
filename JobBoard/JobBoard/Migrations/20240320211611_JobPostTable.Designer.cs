@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace JobBoard.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240319225242_JobPost")]
-    partial class JobPost
+    [Migration("20240320211611_JobPostTable")]
+    partial class JobPostTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,7 +33,18 @@ namespace JobBoard.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("CreatedUserId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("DeleteDate")
@@ -46,8 +57,14 @@ namespace JobBoard.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("LevelId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("PostDate")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("SectorId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()

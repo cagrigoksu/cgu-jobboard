@@ -30,7 +30,18 @@ namespace JobBoard.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("CreatedUserId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("DeleteDate")
@@ -43,8 +54,14 @@ namespace JobBoard.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("LevelId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("PostDate")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("SectorId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
