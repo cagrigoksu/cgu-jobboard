@@ -21,25 +21,7 @@
                     </li>
 
                     @{
-                        @* if (Model.Id == 0) *@
-                        @* { *@
-                        @*     <li class="nav-item"> *@
-                        @*         <a class ="nav-link text-dark" asp-area = "" asp-controller = "User" asp-action = "LogIn"> Log In </a> *@
-                        @*     </li> *@
-                        @*     <li class="nav-item"> *@
-                        @*         <a class ="nav-link text-dark" asp-area = "" asp-controller = "User" asp-action = "LogOn"> Log On </a> *@
-                        @*     </li> *@
-                        @* } *@
-                        @* else *@
-                        @* { *@
-                        @*     <li> *@
-                        @*         @Model.Id *@
-                        @*     </li> *@
-                        @*     <li> *@
-                        @*         @Model.Email *@
-                        @*     </li> *@
-                        @* } *@
-                        if (HttpContextAccessor?.HttpContext?.Session.GetString("Id") == null)
+                       if (HttpContextAccessor?.HttpContext?.Session.GetString("Id") == null)
                         {
                             <li class="nav-item">
                                 <a class ="nav-link text-dark" asp-area = "" asp-controller = "User" asp-action = "LogIn"> Log In </a>
@@ -50,20 +32,26 @@
                         }
                         else
                         {
+                            if (HttpContextAccessor?.HttpContext.Session.GetInt32("CompanyUser") == 1)
+                            {
+                                <li>
+                                    <a class="nav-link text-dark" asp-controller="Poster" asp-action="Dashboard">Dashboard</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a class="nav-link text-dark">@HttpContextAccessor?.HttpContext.Session.GetString("Email")</a>
+                                </li>
+                            }
                             <li>
-                                @HttpContextAccessor?.HttpContext?.Session.GetString("Id")
-                            </li>
-                            <li>
-                                @HttpContextAccessor?.HttpContext?.Session.GetString("Email")
-                            </li>
-                            <li>
-                                <a class="nav-item text-dark" asp-controller="User" asp-action="LogOut">Log Out</a>
+                                <a class="nav-link text-dark" asp-controller="User" asp-action="LogOut">Log Out</a>
                             </li>
                         }
                     }
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
+                    @* <li class="nav-item"> *@
+                    @*     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
+                    @* </li> *@
                 </ul>
             </div>
         </div>

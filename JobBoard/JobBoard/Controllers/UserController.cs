@@ -36,6 +36,7 @@ namespace JobBoard.Controllers
             {
                 HttpContext.Session.SetString("Id", user.Id.ToString());
                 HttpContext.Session.SetString("Email", user.Email);
+                HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
 
                 var userModel = new Models.IndexModel
                 {
