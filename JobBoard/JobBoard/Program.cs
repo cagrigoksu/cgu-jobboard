@@ -1,4 +1,4 @@
-using JobBoard.DataContexts;
+using JobBoard.DataContext;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

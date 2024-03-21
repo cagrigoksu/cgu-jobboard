@@ -2,7 +2,7 @@
 using System;
 using JobBoard.Models.Data;
 
-namespace JobBoard.DataContexts
+namespace JobBoard.DataContext
 {
     public class AppDbContext : DbContext
     {

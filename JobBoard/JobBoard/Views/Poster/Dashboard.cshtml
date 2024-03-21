@@ -38,8 +38,8 @@
                     @Html.DisplayFor(modelItem => item.PostDate)
             </td>
             <td>
-                <a asp-action="" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="DetailJobPost" asp-route-id="@item.Id" asp-route-detail="@true">Details</a> |
+                    <a asp-action="EditJobPost" asp-route-id="@item.Id" asp-route-edit="@true">Edit</a> |
                 <a asp-action="DeleteJobPost" asp-controller="Poster" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>

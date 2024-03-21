@@ -3,16 +3,26 @@
 *@
 @{
 }
-@model JobBoard.Models.Data.JobPostDataModel
+@model JobBoard.Models.View.JobPostViewModel
+
+@{
+    var edit = Model.Edit;
+    var postAction = edit ? "EditJobPost" : "AddJobPost";
+}
 
 <h1> New Job Post </h1>
 @* <form method="post" asp-controller="Home" asp-action="LogOn"> *@
-@using (Html.BeginForm("AddJobPost", "Poster", FormMethod.Post))
+@using (Html.BeginForm( postAction, "Poster", FormMethod.Post))
 {
     <div>
-        <input placeholder="Job Title" autocomplete="off" type="text" name="title" asp-for="Title" required>
-        <textarea asp-for="Description" rows="4" cols="50"></textarea>
-        <input type="submit" value="Save">
+        <input placeholder="Job Title" autocomplete="off" type="text" name="title" asp-for="Title" value="@(String.IsNullOrEmpty(Model.Title)? "" : Model.Title)" required readonly="@(Model.Detail)">
+        <textarea asp-for="Description" rows="4" cols="50" readonly="@(Model.Detail)">@(String.IsNullOrEmpty(Model.Description)?"":Model.Description)</textarea>
+        @{
+            if (!Model.Detail)
+            {
+                <input type="submit" value="Save">
+            }
+        }
     </div>
 
 }

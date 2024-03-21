@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using JobBoard.DataContext;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using JobBoard.DataContexts;
 using JobBoard.Models;
 using JobBoard.Models.Data;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
@@ -34,7 +34,8 @@ namespace JobBoard.Controllers
                 FirstOrDefault(x => x.Email == email && x.Password == pwd);
             if (user != null)
             {
-                HttpContext.Session.SetString("Id", user.Id.ToString());
+                Globals.userId=user.Id;
+                HttpContext.Session.SetInt32("Id", user.Id);
                 HttpContext.Session.SetString("Email", user.Email);
                 HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
 
