@@ -4,7 +4,9 @@
 @{
 }
 
-@model IEnumerable<JobBoard.Models.Data.JobPostDataModel>
+@using JobBoard.Models.View
+@model JobBoard.Models.View.JobPostViewModel
+
 
 <h1>Your Posted Jobs</h1>
 
@@ -26,7 +28,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model) {
+    @foreach (var item in Model.jobs) {
         <tr>
             <td>
                     @Html.DisplayFor(modelItem => item.Id)

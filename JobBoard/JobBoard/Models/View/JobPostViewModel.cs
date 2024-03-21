@@ -22,5 +22,6 @@ namespace JobBoard.Models.View
 
         public bool Edit { get; set; }
         public bool Detail { get; set; }
+        public IQueryable<JobPostViewModel> jobs { get; set; }
     }
 }

@@ -12,11 +12,11 @@ namespace JobBoard.Controllers
 {
     public class PosterController:Controller
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext DB;
 
         public PosterController(AppDbContext context)
         {
-            _context = context;
+            DB = context;
         }
 
         public IActionResult  Dashboard()
@@ -25,8 +25,18 @@ namespace JobBoard.Controllers
              {
                  return View("LogIn");
              }
-             
-             return View(_context.Jobs.Where(x => x.CreatedUserId == HttpContext.Session.GetInt32("Id")));
+
+             var jobPosts = from j in DB.Jobs
+                 where j.CreatedUserId == Globals.userId
+                 select new JobPostViewModel
+                 {
+                     Id = j.Id,
+                     Title = j.Title,
+                     Description = j.Description,
+                     PostDate = j.PostDate
+                 };
+
+            return View(new JobPostViewModel(){jobs = jobPosts});
         }
 
         public IActionResult AddJobPost()
@@ -48,10 +58,20 @@ namespace JobBoard.Controllers
             post.LevelId = Convert.ToInt32(JobLevelEnum.EntryLevel);
             post.CreatedUserId = Globals.userId;
 
-            _context.Add(post);
-            _context.SaveChanges();
+            DB.Add(post);
+            DB.SaveChanges();
 
-            return View("Dashboard", _context.Jobs.Where(x => x.CreatedUserId == Globals.userId));
+            var jobPosts = from j in DB.Jobs
+                where j.CreatedUserId == Globals.userId
+                select new JobPostViewModel
+                {
+                    Id = j.Id,
+                    Title = j.Title,
+                    Description = j.Description,
+                    PostDate = j.PostDate
+                };
+
+            return View("Dashboard",new JobPostViewModel() { jobs = jobPosts });
         }
 
 
@@ -68,7 +88,7 @@ namespace JobBoard.Controllers
             }
             else
             {
-                var job = _context.Jobs.SingleOrDefault(x => x.Id == id);
+                var job = DB.Jobs.SingleOrDefault(x => x.Id == id);
                 var result = new JobPostViewModel()
                 {
                     Detail = detail,
@@ -95,7 +115,7 @@ namespace JobBoard.Controllers
             }
             else
             {
-                var job = _context.Jobs.SingleOrDefault(x => x.Id == id);
+                var job = DB.Jobs.SingleOrDefault(x => x.Id == id);
                 var result = new JobPostViewModel()
                 {
                     Edit = edit,
@@ -112,25 +132,45 @@ namespace JobBoard.Controllers
         [HttpPost]
         public IActionResult EditJobPost(JobPostViewModel post)
         {
-            var dbPost = _context.Jobs.First(x => x.Id == post.Id);
+            var dbPost = DB.Jobs.First(x => x.Id == post.Id);
 
             dbPost.Title = post.Title;
             dbPost.Description = post.Description;
 
-            _context.Update(dbPost);
-            _context.SaveChanges();
-            return View("Dashboard", _context.Jobs.Where(x => x.CreatedUserId == Globals.userId));
+            DB.Update(dbPost);
+            DB.SaveChanges();
+
+            var jobPosts = from j in DB.Jobs
+                where j.CreatedUserId == Globals.userId
+                select new JobPostViewModel
+                {
+                    Id = j.Id,
+                    Title = j.Title,
+                    Description = j.Description,
+                    PostDate = j.PostDate
+                };
+
+            return View("Dashboard", new JobPostViewModel() { jobs = jobPosts });
         }
 
         public IActionResult DeleteJobPost(int id)
         {
-            var post = _context.Jobs.Find(id);
+            var post = DB.Jobs.Find(id);
             if (post != null)
             {
-                _context.Jobs.Remove(post);
+                DB.Jobs.Remove(post);
             }
-            _context.SaveChanges();
-            return View("Dashboard", _context.Jobs.Where(x=>x.CreatedUserId == HttpContext.Session.GetInt32("Id")));
+            DB.SaveChanges();
+
+            var jobPosts = from j in DB.Jobs
+                                                    where j.CreatedUserId == Globals.userId
+                                                    select new JobPostViewModel { 
+                                                        Id = j.Id, 
+                                                        Title = j.Title, 
+                                                        Description = j.Description, 
+                                                        PostDate = j.PostDate};
+
+            return View("Dashboard", new JobPostViewModel(){jobs = jobPosts} );
 
         }
     }
