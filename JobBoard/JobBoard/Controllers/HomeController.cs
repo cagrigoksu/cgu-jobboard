@@ -3,16 +3,33 @@ using JobBoard.Models.Classes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using JobBoard.DataContext;
 
 namespace JobBoard.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly AppDbContext DB;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, AppDbContext context)
         {
             _logger = logger;
+            DB = context;
+        }
+
+        public IQueryable<IndexViewModel> BringAllJobs()
+        {
+            var jobPosts = from j in DB.Jobs
+                select new IndexViewModel
+                {
+                    Id = j.Id,
+                    Title = j.Title,
+                    Description = j.Description,
+                    PostDate = j.PostDate
+                };
+
+            return jobPosts;
         }
         
         public IActionResult Index()
@@ -21,7 +38,9 @@ namespace JobBoard.Controllers
             {
                 return View("LogIn");
             }
-            return View(new IndexModel());
+
+            var jobPosts = BringAllJobs();
+            return View(new IndexViewModel() { JobPosts =  jobPosts});
         }
 
         public IActionResult Privacy()

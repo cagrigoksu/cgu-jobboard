@@ -14,11 +14,13 @@ namespace JobBoard.Controllers
 {
     public class UserController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ILogger<HomeController> _logger;
+        private readonly AppDbContext DB;
 
-        public UserController(AppDbContext context)
+        public UserController(ILogger<HomeController> logger, AppDbContext context)
         {
-            _context = context;
+            DB = context;
+            _logger = logger;
         }
         
         public IActionResult LogIn()
@@ -30,7 +32,7 @@ namespace JobBoard.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult LogIn(string email, string pwd)
         {
-            var user = _context.Users.
+            var user = DB.Users.
                 FirstOrDefault(x => x.Email == email && x.Password == pwd);
             if (user != null)
             {
@@ -39,14 +41,8 @@ namespace JobBoard.Controllers
                 HttpContext.Session.SetString("Email", user.Email);
                 HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
 
-                var userModel = new Models.IndexModel
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    CompanyUser = user.CompanyUser
-                };
-
-                return View("Index", userModel);
+                var jobPosts = new HomeController(_logger,DB).BringAllJobs();
+                return View("Index", new IndexViewModel(){JobPosts = jobPosts});
             }
             else
             {
@@ -73,14 +69,14 @@ namespace JobBoard.Controllers
             if (user.Password == formCollection["pwdConf"])
             {   
                 user.LogOnDate = DateTime.Now;
-                _context.Add(user);
-                _context.SaveChanges();
+                DB.Add(user);
+                DB.SaveChanges();
 
                 return Redirect("/Home/Index");
             }
             else
             {
-                return View("Index");
+                return View("Index", new IndexViewModel());
             }
         }
 
