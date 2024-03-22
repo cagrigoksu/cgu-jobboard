@@ -7,12 +7,18 @@
 @* <form method="post" asp-controller="Home" asp-action="LogOn"> *@
     @using (Html.BeginForm("LogOn", "User", FormMethod.Post))
     {
-        <input placeholder="e-mail" autocomplete="off" type="email" name="email" required>
-        <input placeholder="password" autocomplete="off" type="password" name="pwd" required>
-        <input placeholder="confirm password" autocomplete="off" type="password" name="pwdConf" required>
-        <input type="checkbox" id="hiring" name="hiring" />
-        <label for="hiring">I am HR at a company.</label>
-        <input type="submit" value="Log On">
+    <input placeholder="e-mail" autocomplete="off" type="email" name="email" required>
+    <br>
+    <br>
+    <input placeholder="password" autocomplete="off" type="password" name="pwd" required>
+    <br>
+    <br>
+    <input placeholder="confirm password" autocomplete="off" type="password" name="pwdConf" required>
+    <br>
+    <br>
+    <input type="checkbox" id="hiring" name="hiring"/>
+    <label for="hiring">I am HR at a company.</label><br><br><br>
+    <input type="submit" value="Log On">
     }
 
 @* </form> *@

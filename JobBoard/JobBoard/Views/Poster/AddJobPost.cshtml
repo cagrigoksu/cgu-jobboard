@@ -4,23 +4,46 @@
 @{
 }
 @model JobBoard.Models.View.JobPostViewModel
+@using JobBoard.Enums
 
 @{
     var edit = Model.Edit;
+
     var postAction = edit ? "EditJobPost" : "AddJobPost";
 }
+<input hidden asp-for="Id" value="@Model.Id"/>
 
-<h1> New Job Post </h1>
+<h1>@(edit ? "Edit Job Post" : Model.Detail ? "Job Details": "Add New Post")</h1>
 @* <form method="post" asp-controller="Home" asp-action="LogOn"> *@
 @using (Html.BeginForm( postAction, "Poster", FormMethod.Post))
 {
     <div>
-        <input placeholder="Job Title" autocomplete="off" type="text" name="title" asp-for="Title" value="@(String.IsNullOrEmpty(Model.Title)? "" : Model.Title)" required readonly="@(Model.Detail)">
+        <input placeholder="Job Title" type="text" name="title" asp-for="Title" value="@(String.IsNullOrEmpty(Model.Title)? "" : Model.Title)" required readonly="@(Model.Detail)">
+        <br><br />
+        <select asp-for="LevelId" disabled="@(Model.Detail)">
+            @{
+                foreach (var enumItem in Enum.GetValues(typeof(JobLevelEnum)))
+                {
+                    <option value="@((int)enumItem)" selected="@(Model.LevelId == (int)enumItem)"> @(enumItem) </option>
+                }
+            }
+        </select>
+        <br><br/>
+        <input placeholder="Country" asp-for="Country" value="@(String.IsNullOrEmpty(Model.Country)?"": Model.Country)" required readonly="@(Model.Detail)"/>
+        <br><br />
+        <input placeholder="City" asp-for="City" value="@(String.IsNullOrEmpty(Model.City)?"": Model.City)" required readonly="@(Model.Detail)"/>
+        <br><br />
         <textarea asp-for="Description" rows="4" cols="50" readonly="@(Model.Detail)">@(String.IsNullOrEmpty(Model.Description)?"":Model.Description)</textarea>
+
+        <br><br /><br><br />
         @{
             if (!Model.Detail)
             {
-                <input type="submit" value="Save">
+                <input type="submit" value="save">
+            }
+            else
+            {
+                <input type="button" value="edit this post" asp-route-id="@Model.Id" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("EditJobPost", "Poster", new {id = Model.Id, edit=true })+"'")"/>
             }
         }
     </div>

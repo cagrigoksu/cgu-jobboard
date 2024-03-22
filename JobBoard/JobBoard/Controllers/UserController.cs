@@ -72,11 +72,25 @@ namespace JobBoard.Controllers
                 DB.Add(user);
                 DB.SaveChanges();
 
-                return Redirect("/Home/Index");
+                var userResult = DB.Users.FirstOrDefault(x => x.Email == user.Email);
+                if (userResult != null)
+                {
+                    Globals.userId = user.Id;
+                    HttpContext.Session.SetInt32("Id", user.Id);
+                    HttpContext.Session.SetString("Email", user.Email);
+                    HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
+
+                    var jobPosts = new HomeController(_logger, DB).BringAllJobs();
+                    return View("Index", new IndexViewModel() { JobPosts = jobPosts });
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
             else
             {
-                return View("Index", new IndexViewModel());
+                return View("LogOn");
             }
         }
 

@@ -52,10 +52,7 @@ namespace JobBoard.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public IActionResult AddJobPost(JobPostDataModel post)
         {
-            post.City = "test";
-            post.Country = "test";
             post.PostDate = DateTime.Now;
-            post.LevelId = Convert.ToInt32(JobLevelEnum.EntryLevel);
             post.CreatedUserId = Globals.userId;
 
             DB.Add(post);
@@ -75,7 +72,7 @@ namespace JobBoard.Controllers
         }
 
 
-        public IActionResult DetailJobPost(int? id, bool detail)
+        public IActionResult DetailJobPost(int id, bool detail)
         {
             if (new SessionUtils().EmptySession())
             {
@@ -86,47 +83,40 @@ namespace JobBoard.Controllers
             {
                 return NotFound();
             }
-            else
+
+            var job = DB.Jobs.SingleOrDefault(x => x.Id == id);
+            var result = new JobPostViewModel()
             {
-                var job = DB.Jobs.SingleOrDefault(x => x.Id == id);
-                var result = new JobPostViewModel()
-                {
-                    Detail = detail,
-                    Id = job.Id,
-                    Title = job.Title,
-                    Description = job.Description
-                };
-                return View("AddJobPost",result);
-
-
-            }
+                Detail = detail,
+                Id = job.Id,
+                Title = job.Title,
+                LevelId = job.LevelId,
+                Country = job.Country,
+                City = job.City,
+                Description = job.Description
+            };
+            return View("AddJobPost",result);
         }
 
-        public IActionResult EditJobPost(int? id, bool edit)
+        public IActionResult EditJobPost(int id, bool edit)
         {
             if (new SessionUtils().EmptySession())
             {
                 return View("LogIn");
             }
 
-            if (id == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                var job = DB.Jobs.SingleOrDefault(x => x.Id == id);
-                var result = new JobPostViewModel()
+            var job = DB.Jobs.SingleOrDefault(x => x.Id == id);
+            var result = new JobPostViewModel()
                 {
                     Edit = edit,
                     Id = job.Id,
                     Title = job.Title,
+                    LevelId = job.LevelId,
+                    Country = job.Country,
+                    City = job.City,
                     Description = job.Description
                 };
-                return View("AddJobPost", result);
-
-
-            }
+            return View("AddJobPost", result);
         }
 
         [HttpPost]
@@ -136,6 +126,9 @@ namespace JobBoard.Controllers
 
             dbPost.Title = post.Title;
             dbPost.Description = post.Description;
+            dbPost.LevelId = post.LevelId;
+            dbPost.Country = post.Country;
+            dbPost.City = post.City;
 
             DB.Update(dbPost);
             DB.SaveChanges();
