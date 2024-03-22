@@ -7,6 +7,7 @@ using JobBoard.Models.Data;
 using JobBoard.Models.View;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace JobBoard.Controllers
 {
@@ -96,6 +97,14 @@ namespace JobBoard.Controllers
                 Description = job.Description
             };
             return View("AddJobPost",result);
+        }
+
+        public PartialViewResult ModalTest()
+        {
+            return new PartialViewResult
+            {
+                ViewName = "Partial",
+            };
         }
 
         public IActionResult EditJobPost(int id, bool edit)

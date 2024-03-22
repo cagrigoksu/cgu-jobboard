@@ -42,7 +42,7 @@ namespace JobBoard.Controllers
                 HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
 
                 var jobPosts = new HomeController(_logger,DB).BringAllJobs();
-                return View("Index", new IndexViewModel(){JobPosts = jobPosts});
+                return View("Index", new IndexViewModel(){UserId = user.Id, CompanyUser = user.CompanyUser,JobPosts = jobPosts});
             }
             else
             {

@@ -8,14 +8,15 @@
 
 @{
     var edit = Model.Edit;
-
     var postAction = edit ? "EditJobPost" : "AddJobPost";
 }
-<input hidden asp-for="Id" value="@Model.Id"/>
-
-<h1>@(edit ? "Edit Job Post" : Model.Detail ? "Job Details": "Add New Post")</h1>
+<head>
+    <input hidden asp-for="Id" value="@Model.Id" />
+</head>
+<body>
+<h1>@(edit ? "Edit Job Post" : Model.Detail ? "Job Details" : "Add New Post")</h1>
 @* <form method="post" asp-controller="Home" asp-action="LogOn"> *@
-@using (Html.BeginForm( postAction, "Poster", FormMethod.Post))
+@using (Html.BeginForm(postAction, "Poster", FormMethod.Post))
 {
     <div>
         <input placeholder="Job Title" type="text" name="title" asp-for="Title" value="@(String.IsNullOrEmpty(Model.Title)? "" : Model.Title)" required readonly="@(Model.Detail)">
@@ -28,24 +29,42 @@
                 }
             }
         </select>
-        <br><br/>
-        <input placeholder="Country" asp-for="Country" value="@(String.IsNullOrEmpty(Model.Country)?"": Model.Country)" required readonly="@(Model.Detail)"/>
         <br><br />
-        <input placeholder="City" asp-for="City" value="@(String.IsNullOrEmpty(Model.City)?"": Model.City)" required readonly="@(Model.Detail)"/>
+        <input placeholder="Country" asp-for="Country" value="@(String.IsNullOrEmpty(Model.Country)?"": Model.Country)" required readonly="@(Model.Detail)" />
         <br><br />
-        <textarea asp-for="Description" rows="4" cols="50" readonly="@(Model.Detail)">@(String.IsNullOrEmpty(Model.Description)?"":Model.Description)</textarea>
+        <input placeholder="City" asp-for="City" value="@(String.IsNullOrEmpty(Model.City)?"": Model.City)" required readonly="@(Model.Detail)" />
+        <br><br />
+        <textarea asp-for="Description" rows="4" cols="50" readonly="@(Model.Detail)">@(String.IsNullOrEmpty(Model.Description) ? "" : Model.Description)</textarea>
 
         <br><br /><br><br />
         @{
-            if (!Model.Detail)
+            if (Model.Edit)
             {
                 <input type="submit" value="save">
+                <input type="button" value="delete this post" asp-route-id="@Model.Id" onclick="@("window.location.href='"+@Url.Action("DeleteJobPost", "Poster", new {id = Model.Id})+"'")" />
+            }
+            else if (Model.Detail)
+            {
+                <input type="button" value="edit this post" asp-route-id="@Model.Id" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("EditJobPost", "Poster", new {id = Model.Id, edit=true })+"'")" />
             }
             else
             {
-                <input type="button" value="edit this post" asp-route-id="@Model.Id" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("EditJobPost", "Poster", new {id = Model.Id, edit=true })+"'")"/>
+                    <input type="submit" value="save">
             }
+
         }
+
+         
+         
+         
+         
+         
+         
+
     </div>
 
 }
+</body>
+
+
+

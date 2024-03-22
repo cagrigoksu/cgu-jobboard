@@ -15,7 +15,7 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Id)
+            @Html.DisplayNameFor(model => model.JobId)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Title)
@@ -23,13 +23,14 @@
         <th>
             @Html.DisplayNameFor(model => model.PostDate)
         </th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
     @foreach (var item in Model.JobPosts) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Id)
+                @Html.DisplayFor(modelItem => item.JobId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
@@ -37,11 +38,15 @@
             <td>
                 @Html.DisplayFor(modelItem => item.PostDate)
             </td>
-            @* <td> *@
-            @*     $1$ <a asp-action="DetailJobPost" asp-route-id="@item.Id" asp-route-detail="@true">Details</a> | #1# *@
-            @*     $1$ <a asp-action="EditJobPost" asp-route-id="@item.Id" asp-route-edit="@true">Edit</a> | #1# *@
-            @*     $1$ <a asp-action="DeleteJobPost" asp-controller="Poster" asp-route-id="@item.Id">Delete</a> #1# *@
-            @* </td> *@
+            @{
+                if (!Model.CompanyUser)
+                {
+                    <td>
+                        <a asp-action="" asp-route-id="@item.JobId" asp-route-detail="@true">Details</a>
+                    </td>
+                }
+            }
+            
         </tr>
     }
     </tbody>

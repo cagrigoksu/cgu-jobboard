@@ -23,7 +23,7 @@ namespace JobBoard.Controllers
             var jobPosts = from j in DB.Jobs
                 select new IndexViewModel
                 {
-                    Id = j.Id,
+                    JobId = j.Id,
                     Title = j.Title,
                     Description = j.Description,
                     PostDate = j.PostDate
