@@ -40,7 +40,7 @@ namespace JobBoard.Controllers
             }
 
             var jobPosts = BringAllJobs();
-            return View(new IndexViewModel() { JobPosts =  jobPosts});
+            return View(new IndexViewModel() { UserId = Globals.UserId, CompanyUser = Globals.CompanyUser, JobPosts = jobPosts });
         }
 
         public IActionResult Privacy()

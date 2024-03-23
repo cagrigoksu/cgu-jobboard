@@ -2,6 +2,7 @@
 {
     public static class Globals
     {
-        public static int userId = 0;
+        public static int UserId = 0;
+        public static bool CompanyUser = false;
     }
 }

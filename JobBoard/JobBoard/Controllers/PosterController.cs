@@ -29,7 +29,7 @@ namespace JobBoard.Controllers
              }
 
              var jobPosts = from j in DB.Jobs
-                 where j.CreatedUserId == Globals.userId
+                 where j.CreatedUserId == Globals.UserId
                  select new JobPostViewModel
                  {
                      Id = j.Id,
@@ -55,13 +55,13 @@ namespace JobBoard.Controllers
         public IActionResult AddJobPost(JobPostDataModel post)
         {
             post.PostDate = DateTime.Now;
-            post.CreatedUserId = Globals.userId;
+            post.CreatedUserId = Globals.UserId;
 
             DB.Add(post);
             DB.SaveChanges();
 
             var jobPosts = from j in DB.Jobs
-                where j.CreatedUserId == Globals.userId
+                where j.CreatedUserId == Globals.UserId
                 select new JobPostViewModel
                 {
                     Id = j.Id,
@@ -136,7 +136,7 @@ namespace JobBoard.Controllers
             DB.SaveChanges();
 
             var jobPosts = from j in DB.Jobs
-                where j.CreatedUserId == Globals.userId
+                where j.CreatedUserId == Globals.UserId
                 select new JobPostViewModel
                 {
                     Id = j.Id,
@@ -159,7 +159,7 @@ namespace JobBoard.Controllers
             DB.SaveChanges();
 
             var jobPosts = from j in DB.Jobs
-                                                    where j.CreatedUserId == Globals.userId
+                                                    where j.CreatedUserId == Globals.UserId
                                                     select new JobPostViewModel { 
                                                         Id = j.Id, 
                                                         Title = j.Title, 
@@ -172,7 +172,7 @@ namespace JobBoard.Controllers
 
         public IActionResult DeleteConfirmation(int deleteId)
         {
-            return PartialView("DeleteConfirmationPartialView", new DeleteConfirmationPartialViewModel(){Id = deleteId});
+            return PartialView("DeleteConfirmationPartialView", new JobPostViewModel(){Id = deleteId});
         }
     }
 }

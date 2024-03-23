@@ -36,7 +36,11 @@
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PostDate)
+                @{
+                    var postDate = item.PostDate.ToShortDateString();
+                }
+               
+                @Html.DisplayFor(modelItem => postDate)
             </td>
             @{
                 if (!Model.CompanyUser)
