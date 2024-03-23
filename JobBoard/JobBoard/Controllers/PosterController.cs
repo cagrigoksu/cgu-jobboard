@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using JobBoard.DataContext;
 using JobBoard.Enums;
+using JobBoard.Models;
 using Microsoft.AspNetCore.Mvc;
 using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
@@ -98,15 +99,7 @@ namespace JobBoard.Controllers
             };
             return View("AddJobPost",result);
         }
-
-        public PartialViewResult ModalTest()
-        {
-            return new PartialViewResult
-            {
-                ViewName = "Partial",
-            };
-        }
-
+        
         public IActionResult EditJobPost(int id, bool edit)
         {
             if (new SessionUtils().EmptySession())
@@ -155,6 +148,7 @@ namespace JobBoard.Controllers
             return View("Dashboard", new JobPostViewModel() { jobs = jobPosts });
         }
 
+        [HttpPost]
         public IActionResult DeleteJobPost(int id)
         {
             var post = DB.Jobs.Find(id);
@@ -176,9 +170,9 @@ namespace JobBoard.Controllers
 
         }
 
-        public IActionResult Modal()
+        public IActionResult DeleteConfirmation(int deleteId)
         {
-            return PartialView("ModalView");
+            return PartialView("DeleteConfirmationPartialView", new DeleteConfirmationPartialViewModel(){Id = deleteId});
         }
     }
 }

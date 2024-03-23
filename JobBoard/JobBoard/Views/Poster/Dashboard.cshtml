@@ -40,13 +40,10 @@
             </td>
             <td>
                 <a asp-action="DetailJobPost" asp-route-id="@item.Id" asp-route-detail="@true">Details</a> |
-                <a asp-action="EditJobPost" asp-route-id="@item.Id" asp-route-edit="@true">Edit</a> |
-                <a onclick="showPop('@Url.Action("Modal")','Attention!')">Delete</a>
-                @* <a onclick="showPop('@Url.Action("Modal")','TEESSTT')" class="btn btn-success text-white">Try This</a> *@
-                    
+                <a asp-action="EditJobPost" asp-route-id="@item.Id" asp-route-edit="@true">Edit</a> 
             </td>
         </tr>
     }
     </tbody>
+
 </table>
-@* @await Html.PartialAsync("ModalView") *@

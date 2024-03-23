@@ -19,3 +19,22 @@ showPop = (url, title) => {
 modalClose = () => {
     $('#formModal').modal('hide')   
 }
+
+redirectToDashboard = () => {
+    window.location.href = "/Poster/Dashboard";
+}
+deleteJobPost = (url, deleteId) => {
+
+    modalClose();
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: {
+            id: deleteId
+        },
+        success: function () {
+            redirectToDashboard();
+        }
+    });
+}
