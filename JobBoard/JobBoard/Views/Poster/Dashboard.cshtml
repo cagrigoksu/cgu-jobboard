@@ -9,6 +9,7 @@
 <h1>Your Posted Jobs</h1>
 
 <input type="button" value="Post a New Job" onclick="@("window.location.href='" + @Url.Action("AddJobPost", "Poster") + "'");"/>
+<br/>
 
 <table class="table">
     <thead>
@@ -29,20 +30,23 @@
     @foreach (var item in Model.jobs) {
         <tr>
             <td>
-                    @Html.DisplayFor(modelItem => item.Id)
+                @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => item.Title)
+                @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => item.PostDate)
+                @Html.DisplayFor(modelItem => item.PostDate)
             </td>
             <td>
-                    <a asp-action="DetailJobPost" asp-route-id="@item.Id" asp-route-detail="@true">Details</a> |
-                    <a asp-action="EditJobPost" asp-route-id="@item.Id" asp-route-edit="@true">Edit</a> |
-                <a asp-action="DeleteJobPost" asp-controller="Poster" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="DetailJobPost" asp-route-id="@item.Id" asp-route-detail="@true">Details</a> |
+                <a asp-action="EditJobPost" asp-route-id="@item.Id" asp-route-edit="@true">Edit</a> |
+                <a onclick="showPop('@Url.Action("Modal")','Attention!')">Delete</a>
+                @* <a onclick="showPop('@Url.Action("Modal")','TEESSTT')" class="btn btn-success text-white">Try This</a> *@
+                    
             </td>
         </tr>
     }
     </tbody>
 </table>
+@* @await Html.PartialAsync("ModalView") *@

@@ -175,5 +175,10 @@ namespace JobBoard.Controllers
             return View("Dashboard", new JobPostViewModel(){jobs = jobPosts} );
 
         }
+
+        public IActionResult Modal()
+        {
+            return PartialView("ModalView");
+        }
     }
 }
