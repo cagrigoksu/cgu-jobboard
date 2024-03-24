@@ -22,6 +22,11 @@ namespace JobBoard.Controllers
         }
         public IActionResult ApplyToJob(int? id)
         {
+            if (new SessionUtils().EmptySession())
+            {
+                return View("LogIn");
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -45,6 +50,11 @@ namespace JobBoard.Controllers
         [HttpPost]
         public IActionResult Apply(JobApplyViewModel view)
         {
+            if (new SessionUtils().EmptySession())
+            {
+                return View("LogIn");
+            }
+
             var jobPosts = new HomeController(null, DB).BringAllJobs();
 
             string filenameMotivation = "";
@@ -79,23 +89,50 @@ namespace JobBoard.Controllers
 
         }
 
+        public async Task<IActionResult> AppliedJobsPartialView(AppliedJobsViewModel model)
+        {
+            var jobList =
+                from post in DB.JobPosts
+                join application in DB.JobApplications on post.Id equals application.JobId
+                where application.ApplicantId == Globals.UserId && !application.IsDeleted && !post.IsDeleted
+                select new AppliedJobsListModel()
+                {
+                    Title = post.Title,
+                    ApplicationDate = application.ApplicationDate,
+                    City = post.City,
+                    CompanyId = post.CompanyId,
+                    Id = application.Id,
+                    JobId = application.JobId
+                };
+            // var jobList = DB.JobApplications.ToList().Where(x => x.ApplicantId == Globals.UserId
+            //                                                      && !x.IsDeleted);
+
+            // await Task.CompletedTask;
+            return PartialView("AppliedJobsPartialView",new AppliedJobsPartialViewModel() { AppliedJobList = jobList });
+        }
+
         public IActionResult AppliedJobs(AppliedJobsViewModel model)
         {
+            if (new SessionUtils().EmptySession())
+            {
+                return View("LogIn");
+            }
+
             var jobList =
                 from j in DB.JobPosts
                 join i in DB.JobApplications on j.Id equals i.JobId 
                 where i.ApplicantId == Globals.UserId && !i.IsDeleted && !j.IsDeleted
                 select new AppliedJobsListModel()
                 {
+                    Id = i.Id,
+                    JobId = i.JobId,
                     Title = j.Title,
                     ApplicationDate = i.ApplicationDate,
                     City = j.City,
                     CompanyId = j.CompanyId,
-                    Id = i.Id,
-                    JobId = i.JobId
+                    Status = i.Status
                 };
-            // var jobList = DB.JobApplications.ToList().Where(x => x.ApplicantId == Globals.UserId
-            //                                                      && !x.IsDeleted);
+
             return View(new AppliedJobsViewModel(){AppliedJobList = jobList});
         }
     }

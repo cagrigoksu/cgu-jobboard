@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using JobBoard.Enums;
 
 namespace JobBoard.Models.Classes
 {
@@ -18,6 +19,6 @@ namespace JobBoard.Models.Classes
         public bool IsDeleted { get; set; } = false;
         public DateTime? DeleteDate { get; set; }
         public DateTime ApplicationDate { get; set; }
-        public int ApplicationId { get; set; }
+        public ApplicationStatusEnum Status { get; set; }
     }
 }
