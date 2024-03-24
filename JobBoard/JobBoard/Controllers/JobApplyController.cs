@@ -78,5 +78,25 @@ namespace JobBoard.Controllers
             return NotFound();
 
         }
+
+        public IActionResult AppliedJobs(AppliedJobsViewModel model)
+        {
+            var jobList =
+                from j in DB.JobPosts
+                join i in DB.JobApplications on j.Id equals i.JobId 
+                where i.ApplicantId == Globals.UserId && !i.IsDeleted && !j.IsDeleted
+                select new AppliedJobsListModel()
+                {
+                    Title = j.Title,
+                    ApplicationDate = i.ApplicationDate,
+                    City = j.City,
+                    CompanyId = j.CompanyId,
+                    Id = i.Id,
+                    JobId = i.JobId
+                };
+            // var jobList = DB.JobApplications.ToList().Where(x => x.ApplicantId == Globals.UserId
+            //                                                      && !x.IsDeleted);
+            return View(new AppliedJobsViewModel(){AppliedJobList = jobList});
+        }
     }
 }

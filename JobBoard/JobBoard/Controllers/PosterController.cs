@@ -52,7 +52,7 @@ namespace JobBoard.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult AddJobPost(JobPostDataModel post)
+        public IActionResult AddJobPost(AppliedJobsListModel post)
         {
             post.PostDate = DateTime.Now;
             post.CreatedUserId = Globals.UserId;

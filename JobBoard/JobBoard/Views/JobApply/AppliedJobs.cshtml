@@ -1,0 +1,53 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model JobBoard.Models.View.AppliedJobsViewModel
+
+<div>
+    
+    <table class="table">
+        <thead>
+        <tr>
+            <th hidden>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.JobId)
+                </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationDate)
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.AppliedJobList) {
+            <tr>
+                <td hidden>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td> 
+                <td >
+                    @Html.DisplayFor(modelItem => item.JobId)
+                </td> 
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApplicationDate)
+                </td>
+                <td>
+                    <input type="button" value="details" class="btn btn-outline-info" onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId=item.JobId})','Job details')" />
+                    </td>
+            
+            </tr>
+        }
+        </tbody>
+
+    </table>
+
+</div>
