@@ -9,8 +9,7 @@ showPop = (url, title) => {
         url: url,
         success: function (result) {
             $('#formModal .modal-body').html(result)
-            $('#formModal .modal-title').html(title)
-            
+            $('#formModal .modal-title').html(title)            
             $('#formModal').modal('show');
         }
     });

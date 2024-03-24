@@ -41,7 +41,7 @@
             if (Model.Edit)
             {
                 <input type="submit" value="save">
-                    <input type="button" value="delete this post" onclick="showPop('@Url.Action("DeleteConfirmation", "Poster", new {deleteId=Model.Id})','Attention!')" />
+                <input type="button" value="delete this post" onclick="showPop('@Url.Action("DeleteConfirmation", "Poster", new {deleteId=Model.Id})','Attention!')" />
             }
             else if (Model.Detail)
             {

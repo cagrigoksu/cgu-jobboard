@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using JobBoard.DataContext;
+using JobBoard.Models.View;
 
 namespace JobBoard.Controllers
 {
@@ -41,6 +42,21 @@ namespace JobBoard.Controllers
 
             var jobPosts = BringAllJobs();
             return View(new IndexViewModel() { UserId = Globals.UserId, CompanyUser = Globals.CompanyUser, JobPosts = jobPosts });
+        }
+
+        public IActionResult JobPostDetail(int jobId)
+        {
+            var job = DB.Jobs.SingleOrDefault(x => x.Id == jobId);
+            var result = new JobApplyViewModel()
+            {
+                JobId = job.Id,
+                Title = job.Title,
+                LevelId = job.LevelId,
+                Country = job.Country,
+                City = job.City,
+                Description = job.Description
+            };
+            return PartialView("JobDetailPartialView", result);
         }
 
         public IActionResult Privacy()

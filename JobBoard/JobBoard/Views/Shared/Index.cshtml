@@ -46,7 +46,10 @@
                 if (!Model.CompanyUser)
                 {
                     <td>
-                        <a asp-action="" asp-route-id="@item.JobId" asp-route-detail="@true">Details</a>
+                        <input type="button" value="details" class="btn btn-outline-info" onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId=item.JobId})','Job details')" />
+
+                        @* <a asp-action="" asp-route-id="@item.JobId" onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId = item.JobId})','Job details')">Details</a> *@
+                        @* <input type="button" value="delete this post" onclick="showPop('@Url.Action("DeleteConfirmation", "Poster", new {deleteId=Model.Id})','Attention!')" /> *@
                     </td>
                 }
             }
