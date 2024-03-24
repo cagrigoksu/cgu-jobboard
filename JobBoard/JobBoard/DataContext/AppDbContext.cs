@@ -12,7 +12,8 @@ namespace JobBoard.DataContext
 
         public DbSet<UserDataModel> Users { get; set; }
 
-        public DbSet<JobPostDataModel> Jobs { get; set; }
+        public DbSet<JobPostDataModel> JobPosts { get; set; }
+        public DbSet<JobApplicationDataModel> JobApplications { get; set; }
 
     }
 }

@@ -21,7 +21,7 @@ namespace JobBoard.Controllers
 
         public IQueryable<IndexViewModel> BringAllJobs()
         {
-            var jobPosts = from j in DB.Jobs
+            var jobPosts = from j in DB.JobPosts
                 select new IndexViewModel
                 {
                     JobId = j.Id,
@@ -46,7 +46,7 @@ namespace JobBoard.Controllers
 
         public IActionResult JobPostDetail(int jobId)
         {
-            var job = DB.Jobs.SingleOrDefault(x => x.Id == jobId);
+            var job = DB.JobPosts.SingleOrDefault(x => x.Id == jobId);
             var result = new JobApplyViewModel()
             {
                 JobId = job.Id,

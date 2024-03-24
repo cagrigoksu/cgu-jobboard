@@ -1,6 +1,8 @@
-﻿using JobBoard.DataContext;
+﻿using System.Runtime.InteropServices.JavaScript;
+using JobBoard.DataContext;
 using JobBoard.Models;
 using JobBoard.Models.Classes;
+using JobBoard.Models.Data;
 using JobBoard.Models.View;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting.Internal;
@@ -25,7 +27,7 @@ namespace JobBoard.Controllers
                 return NotFound();
             }
 
-            var jobDetails = DB.Jobs.Find(id);
+            var jobDetails = DB.JobPosts.Find(id);
             var view = new JobApplyViewModel
             {
                 JobId = id.Value,
@@ -44,16 +46,32 @@ namespace JobBoard.Controllers
         public IActionResult Apply(JobApplyViewModel view)
         {
             var jobPosts = new HomeController(null, DB).BringAllJobs();
-            if (view.CV != null)
-            { 
-                string contentPath = env.ContentRootPath;
 
-                string path1 = Path.Combine(env.ContentRootPath, "Uploads");
-                string path = Path.Combine(path1, "Resumes");
-                var uniqueFileName = Globals.UserId.ToString()+".pdf";
-                using FileStream stream = new FileStream(Path.Combine(path, uniqueFileName), FileMode.Create);
+            string filenameMotivation = "";
+
+            if (view.CV != null)
+            {
+                string root = Path.Combine(env.ContentRootPath, "Uploads");
+                string path = Path.Combine(root, "Resumes");
+                var filenameCV = Globals.UserId.ToString() +"_"+ view.JobId.ToString() + ".pdf";
+
+                using FileStream stream = new FileStream(Path.Combine(path, filenameCV), FileMode.Create);
                 view.CV.CopyTo(stream);
 
+                // TODO: if(view.Motivation){}
+
+                var jobApp = new JobApplicationDataModel()
+                {
+                    ApplicationDate = DateTime.Now,
+                    JobId = view.JobId,
+                    ApplicantId = Globals.UserId,
+                    UrlResume = Path.Combine(path, filenameCV),
+                    UrlMotivationLetter = ""
+            };
+
+                DB.Add(jobApp);
+                DB.SaveChanges();
+                
                 return View("Index", new IndexViewModel() { UserId = Globals.UserId, CompanyUser = Globals.CompanyUser, JobPosts = jobPosts });
             }
 

@@ -28,7 +28,7 @@ namespace JobBoard.Controllers
                  return View("LogIn");
              }
 
-             var jobPosts = from j in DB.Jobs
+             var jobPosts = from j in DB.JobPosts
                  where j.CreatedUserId == Globals.UserId
                  select new JobPostViewModel
                  {
@@ -60,7 +60,7 @@ namespace JobBoard.Controllers
             DB.Add(post);
             DB.SaveChanges();
 
-            var jobPosts = from j in DB.Jobs
+            var jobPosts = from j in DB.JobPosts
                 where j.CreatedUserId == Globals.UserId
                 select new JobPostViewModel
                 {
@@ -86,7 +86,7 @@ namespace JobBoard.Controllers
                 return NotFound();
             }
 
-            var job = DB.Jobs.SingleOrDefault(x => x.Id == id);
+            var job = DB.JobPosts.SingleOrDefault(x => x.Id == id);
             var result = new JobPostViewModel()
             {
                 Detail = detail,
@@ -107,7 +107,7 @@ namespace JobBoard.Controllers
                 return View("LogIn");
             }
 
-            var job = DB.Jobs.SingleOrDefault(x => x.Id == id);
+            var job = DB.JobPosts.SingleOrDefault(x => x.Id == id);
             var result = new JobPostViewModel()
                 {
                     Edit = edit,
@@ -124,7 +124,7 @@ namespace JobBoard.Controllers
         [HttpPost]
         public IActionResult EditJobPost(JobPostViewModel post)
         {
-            var dbPost = DB.Jobs.First(x => x.Id == post.Id);
+            var dbPost = DB.JobPosts.First(x => x.Id == post.Id);
 
             dbPost.Title = post.Title;
             dbPost.Description = post.Description;
@@ -135,7 +135,7 @@ namespace JobBoard.Controllers
             DB.Update(dbPost);
             DB.SaveChanges();
 
-            var jobPosts = from j in DB.Jobs
+            var jobPosts = from j in DB.JobPosts
                 where j.CreatedUserId == Globals.UserId
                 select new JobPostViewModel
                 {
@@ -151,14 +151,14 @@ namespace JobBoard.Controllers
         [HttpPost]
         public IActionResult DeleteJobPost(int id)
         {
-            var post = DB.Jobs.Find(id);
+            var post = DB.JobPosts.Find(id);
             if (post != null)
             {
-                DB.Jobs.Remove(post);
+                DB.JobPosts.Remove(post);
             }
             DB.SaveChanges();
 
-            var jobPosts = from j in DB.Jobs
+            var jobPosts = from j in DB.JobPosts
                                                     where j.CreatedUserId == Globals.UserId
                                                     select new JobPostViewModel { 
                                                         Id = j.Id, 

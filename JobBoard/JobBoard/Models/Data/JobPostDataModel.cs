@@ -15,7 +15,7 @@ namespace JobBoard.Models.Data
         public int LevelId { get; set; }
         public int CreatedUserId { get; set; }
         public DateTime PostDate { get; set; }
-        public bool Deleted { get; set; } = false;
+        public bool IsDeleted { get; set; } = false;
         public DateTime? DeleteDate { get; set; }
     }
 }

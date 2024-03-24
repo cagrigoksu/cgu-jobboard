@@ -11,7 +11,7 @@ namespace JobBoard.Models.Data
         public string Password { get; set; } = null!;
         public bool CompanyUser { get; set; }
         public DateTime LogOnDate { get; set; }
-        public bool Deleted { get; set; } = false;
+        public bool IsDeleted { get; set; } = false;
         public DateTime? DeleteDate { get; set; }
     }
 }
