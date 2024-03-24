@@ -16,7 +16,9 @@ namespace JobBoard.Models.View
         public int LevelId { get; set; }
         public int CreatedUserId { get; set; }
         public DateTime PostDate { get; set; }
+        public bool isApplied { get; set; }
 
+        public ApplicationStatusEnum? Status { get; set; }
         public IFormFile CV { get; set; }
     }
 }

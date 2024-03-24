@@ -28,7 +28,23 @@
     <textarea asp-for="Description" rows="4" cols="50" readonly>@(String.IsNullOrEmpty(Model.Description) ? "" : Model.Description)</textarea>
 
     <br><br /><br><br />
-    <input type="button" value="apply" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("ApplyToJob", "JobApply", new {id = Model.JobId })+"'")" />
-
-
+    @{
+        if (Model.isApplied)
+        {
+            <p>You have already applied to this job. Status: </p>
+            <select asp-for="Status" disabled>
+                @{
+                    foreach (var enumItem in Enum.GetValues(typeof(ApplicationStatusEnum)))
+                    {
+                        <option value="@((int)enumItem)" selected="@((int)Model.Status == (int)enumItem)"> @(enumItem) </option>
+                    }
+                }
+            </select>
+        }
+        else
+        {
+            <input type="button" value="apply" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("ApplyToJob", "JobApply", new {id = Model.JobId })+"'")" />
+        }
+    }
+   
 </div>

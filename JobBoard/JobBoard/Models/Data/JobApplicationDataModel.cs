@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using JobBoard.Enums;
 
 namespace JobBoard.Models.Data
 {
@@ -13,6 +14,7 @@ namespace JobBoard.Models.Data
         public string UrlResume { get; set; }
         public string UrlMotivationLetter { get; set; }
         public DateTime ApplicationDate { get; set; }
+        public ApplicationStatusEnum Status { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime? DeleteDate { get; set; }
     }

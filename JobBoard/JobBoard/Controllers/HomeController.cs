@@ -47,6 +47,8 @@ namespace JobBoard.Controllers
         public IActionResult JobPostDetail(int jobId)
         {
             var job = DB.JobPosts.SingleOrDefault(x => x.Id == jobId);
+            var isApplied = DB.JobApplications.SingleOrDefault(x=>x.ApplicantId== Globals.UserId);
+
             var result = new JobApplyViewModel()
             {
                 JobId = job.Id,
@@ -54,8 +56,15 @@ namespace JobBoard.Controllers
                 LevelId = job.LevelId,
                 Country = job.Country,
                 City = job.City,
-                Description = job.Description
+                Description = job.Description,
+                
             };
+
+            if (isApplied != null)
+            {
+                result.isApplied = true;
+                result.Status = isApplied.Status;
+            }
             return PartialView("JobDetailPartialView", result);
         }
 
