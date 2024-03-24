@@ -3,7 +3,7 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
-./JobBoard/JobBoard/Uploads/Resumes/
+JobBoard/JobBoard/Uploads/Resumes/
 
 # User-specific files
 *.rsuser
