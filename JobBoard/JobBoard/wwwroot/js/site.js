@@ -37,3 +37,20 @@ deleteJobPost = (url, deleteId) => {
         }
     });
 }
+
+appliedJobFilter = (url) => {
+    var selectBox = document.getElementById("statusSelect");
+    var selectedValue = selectBox.value;
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        data: {
+            status: selectedValue
+        },
+        success: function (result) {
+            $("#AppliedJobsPartialViewDiv").html(result);
+        }
+    });
+
+}

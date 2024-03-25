@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices.JavaScript;
 using JobBoard.DataContext;
+using JobBoard.Enums;
 using JobBoard.Models;
 using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
@@ -89,12 +90,14 @@ namespace JobBoard.Controllers
 
         }
 
-        public async Task<IActionResult> AppliedJobsPartialView(AppliedJobsViewModel model)
+        [HttpGet]
+        public IActionResult AppliedJobsPartialView(ApplicationStatusEnum? status)
         {
-            var jobList =
-                from post in DB.JobPosts
+            var jobList = from post in DB.JobPosts
                 join application in DB.JobApplications on post.Id equals application.JobId
-                where application.ApplicantId == Globals.UserId && !application.IsDeleted && !post.IsDeleted
+                where application.ApplicantId == Globals.UserId 
+                      && !application.IsDeleted && !post.IsDeleted
+                      && application.Status == status
                 select new AppliedJobsListModel()
                 {
                     Title = post.Title,
@@ -108,6 +111,8 @@ namespace JobBoard.Controllers
             //                                                      && !x.IsDeleted);
 
             // await Task.CompletedTask;
+            var a = jobList.Count();
+            var b = a;
             return PartialView("AppliedJobsPartialView",new AppliedJobsPartialViewModel() { AppliedJobList = jobList });
         }
 
