@@ -45,4 +45,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+System.IO.Directory.CreateDirectory("Uploads/Resumes");
+System.IO.Directory.CreateDirectory("Uploads/MotivationLetters");
 app.Run();

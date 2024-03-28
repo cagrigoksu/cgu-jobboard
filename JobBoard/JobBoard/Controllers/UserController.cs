@@ -36,7 +36,7 @@ namespace JobBoard.Controllers
                 FirstOrDefault(x => x.Email == email && x.Password == pwd);
             if (user != null)
             {
-                Globals.UserId=user.Id;
+                Globals.UserId = user.Id;
                 Globals.CompanyUser = user.CompanyUser;
                 HttpContext.Session.SetInt32("Id", user.Id);
                 HttpContext.Session.SetString("Email", user.Email);
