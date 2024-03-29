@@ -41,11 +41,19 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+// Added
+app.UseSession();
+app.UseStaticFiles();
+app.UseRouting();
+
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-System.IO.Directory.CreateDirectory("Uploads/Resumes");
-System.IO.Directory.CreateDirectory("Uploads/MotivationLetters");
+Directory.CreateDirectory("Uploads/Resumes");
+Directory.CreateDirectory("Uploads/MotivationLetters");
 
 app.Run();
