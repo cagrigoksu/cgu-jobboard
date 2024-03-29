@@ -12,6 +12,7 @@ namespace JobBoard.Models.View
         public string Country { get; set; }
         public int CompanyId { get; set; }
         public DateTime ApplicationDate { get; set; }
+        public ApplicationStatusEnum? FilterStatus { get; set; }
         public ApplicationStatusEnum Status { get; set; }
         public IQueryable<AppliedJobsListModel> AppliedJobList { get; set; }
     }

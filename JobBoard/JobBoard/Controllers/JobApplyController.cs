@@ -94,26 +94,31 @@ namespace JobBoard.Controllers
         public IActionResult AppliedJobsPartialView(ApplicationStatusEnum? status)
         {
             var jobList = from post in DB.JobPosts
-                join application in DB.JobApplications on post.Id equals application.JobId
-                where application.ApplicantId == Globals.UserId 
-                      && !application.IsDeleted && !post.IsDeleted
-                      && application.Status == status
-                select new AppliedJobsListModel()
-                {
-                    Title = post.Title,
-                    ApplicationDate = application.ApplicationDate,
-                    City = post.City,
-                    CompanyId = post.CompanyId,
-                    Id = application.Id,
-                    JobId = application.JobId
-                };
-            // var jobList = DB.JobApplications.ToList().Where(x => x.ApplicantId == Globals.UserId
-            //                                                      && !x.IsDeleted);
+                    join application in DB.JobApplications on post.Id equals application.JobId
+                    where application.ApplicantId == Globals.UserId 
+                        && !application.IsDeleted 
+                        && !post.IsDeleted
+                    select new AppliedJobsListModel()
+                    {
+                        Title = post.Title,
+                        ApplicationDate = application.ApplicationDate,
+                        City = post.City,
+                        CompanyId = post.CompanyId,
+                        Id = application.Id,
+                        JobId = application.JobId,
+                        Status = application.Status
+                    };
 
-            // await Task.CompletedTask;
-            var a = jobList.Count();
-            var b = a;
-            return PartialView("AppliedJobsPartialView",new AppliedJobsPartialViewModel() { AppliedJobList = jobList });
+            if (status != null)
+            {
+                var a = jobList.Where(x=>(int)x.Status == (int)status);
+                return PartialView("AppliedJobsPartialView", new AppliedJobsPartialViewModel() { AppliedJobList = a, FilterStatus = status.Value });
+            }
+            else
+            {
+                return PartialView("AppliedJobsPartialView", new AppliedJobsPartialViewModel() { AppliedJobList = jobList, FilterStatus = null });
+
+            }
         }
 
         public IActionResult AppliedJobs(AppliedJobsViewModel model)
@@ -126,7 +131,9 @@ namespace JobBoard.Controllers
             var jobList =
                 from j in DB.JobPosts
                 join i in DB.JobApplications on j.Id equals i.JobId 
-                where i.ApplicantId == Globals.UserId && !i.IsDeleted && !j.IsDeleted
+                where i.ApplicantId == Globals.UserId 
+                    && !i.IsDeleted 
+                    && !j.IsDeleted
                 select new AppliedJobsListModel()
                 {
                     Id = i.Id,
@@ -138,7 +145,7 @@ namespace JobBoard.Controllers
                     Status = i.Status
                 };
 
-            return View(new AppliedJobsViewModel(){AppliedJobList = jobList});
+            return View(new AppliedJobsViewModel(){AppliedJobList = jobList, });
         }
     }
 }
