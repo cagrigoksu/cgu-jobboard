@@ -1,0 +1,86 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@using JobBoard_React.Server.Enums
+@model JobBoard_React.Server.Models.View.AppliedJobsPartialViewModel
+
+<div>
+
+    @if (Model.AppliedJobList != null)
+    {
+        var filterText = Model.FilterStatus == null ? "All" : Model.FilterStatus.ToString();
+        <h3>You have @(Model.AppliedJobList.Count() > 1?
+                         Model.AppliedJobList.Count().ToString() + " applications. ("+filterText+")":
+                         Model.AppliedJobList.Count().ToString() + " application. ("+filterText+")")</h3>
+        <br/><br/>
+        <p>Filters: </p>
+        <select class="form-control" style="max-width:10em;" id="statusSelect" onchange="appliedJobFilter('@Url.Action("AppliedJobsPartialView")')">
+            <option id="statusOption" selected="@(Model.FilterStatus == null)" > select one </option>
+            @foreach (var item in Enum.GetValues(typeof(ApplicationStatusEnum)))
+            {
+                <option id="statusOption" selected="@(Model.FilterStatus != null && (int)Model.FilterStatus == (int)item)" value="@((int)item)"> @(item) </option>
+            }
+        </select>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th hidden>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.JobId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApplicationDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.AppliedJobList) {
+                <tr>
+                    <td hidden>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td >
+                        @Html.DisplayFor(modelItem => item.JobId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApplicationDate)
+                    </td>
+                    <td>
+                        @{
+                            var status = item.Status.ToString();
+                        }
+                        @Html.DisplayFor(modelItem => status)
+                    </td>
+                    <td>
+                        <input type="button" value="details" class="btn btn-outline-info" onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId=item.JobId})','Job details')" />
+                    </td>
+    
+                </tr>
+            }
+            </tbody>
+    
+        </table>
+    }
+    else
+    {
+        <h3> You have no applications.</h3>
+    }
+
+
+</div>

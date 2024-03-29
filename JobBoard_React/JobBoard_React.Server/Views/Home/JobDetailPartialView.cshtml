@@ -1,0 +1,51 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@using JobBoard_React.Server.Enums
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model JobBoard_React.Server.Models.View.JobApplyViewModel
+
+
+<input hidden asp-for="JobId" value="@Model.JobId" />
+
+<div>
+    <input placeholder="Job Title" type="text" name="title" asp-for="Title" value="@(String.IsNullOrEmpty(Model.Title)? "" : Model.Title)" required readonly>
+    <br><br />
+    <select asp-for="LevelId" disabled>
+        @{
+            foreach (var enumItem in Enum.GetValues(typeof(JobLevelEnum)))
+            {
+                <option value="@((int)enumItem)" selected="@(Model.LevelId == (int)enumItem)"> @(enumItem) </option>
+            }
+        }
+    </select>
+    <br><br />
+    <input placeholder="Country" asp-for="Country" value="@(String.IsNullOrEmpty(Model.Country)?"": Model.Country)" required readonly/>
+    <br><br />
+    <input placeholder="City" asp-for="City" value="@(String.IsNullOrEmpty(Model.City)?"": Model.City)" required readonly/>
+    <br><br />
+    <textarea asp-for="Description" rows="4" cols="50" readonly>@(String.IsNullOrEmpty(Model.Description) ? "" : Model.Description)</textarea>
+
+    <br><br /><br><br />
+    @{
+        if (Model.isApplied)
+        {
+            <p>You have already applied to this job. Status: </p>
+            <select asp-for="Status" disabled>
+                @{
+                    foreach (var enumItem in Enum.GetValues(typeof(ApplicationStatusEnum)))
+                    {
+                        <option value="@((int)enumItem)" selected="@((int)Model.Status == (int)enumItem)"> @(enumItem) </option>
+                    }
+                }
+            </select>
+        }
+        else
+        {
+            <input type="button" value="apply" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("ApplyToJob", "JobApply", new {id = Model.JobId })+"'")" />
+        }
+    }
+   
+</div>

@@ -1,0 +1,61 @@
+﻿@model JobBoard_React.Server.Models.View.IndexViewModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@* <div class="text-center"> *@
+@*     <h1 class="display-4">Welcome</h1> *@
+@*     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p> *@
+@* </div> *@
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.JobId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PostDate)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.JobPosts) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.JobId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @{
+                    var postDate = item.PostDate.ToShortDateString();
+                }
+               
+                @Html.DisplayFor(modelItem => postDate)
+            </td>
+            @{
+                if (!Model.CompanyUser)
+                {
+                    <td>
+                        <input type="button" value="details" class="btn btn-outline-info" onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId=item.JobId})','Job details')" />
+
+                        @* <a asp-action="" asp-route-id="@item.JobId" onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId = item.JobId})','Job details')">Details</a> *@
+                        @* <input type="button" value="delete this post" onclick="showPop('@Url.Action("DeleteConfirmation", "Poster", new {deleteId=Model.Id})','Attention!')" /> *@
+                    </td>
+                }
+            }
+            
+        </tr>
+    }
+    </tbody>
+</table>
+
