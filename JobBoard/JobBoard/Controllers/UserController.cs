@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobBoard.Models;
 using JobBoard.Models.Data;
+using JobBoard.Models.View;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
+using JobBoard.Models.Classes;
 
 namespace JobBoard.Controllers
 {
@@ -93,6 +95,44 @@ namespace JobBoard.Controllers
             {
                 return View("LogOn");
             }
+        }
+
+        public IActionResult UserProfile()
+        {
+            if (new SessionUtils().EmptySession())
+            {
+                return View("LogIn");
+            }
+
+            var profile = DB.UserProfiles.FirstOrDefault(x => x.UserId == Globals.UserId);
+            var result = new UserProfileViewModel();
+
+            if (profile != null)
+            {
+                result.Name = profile.Name;
+                result.Surname = profile.Surname;
+            }
+
+            return View(result);
+        }
+
+        [HttpPost]
+        public IActionResult UserProfile(UserProfileViewModel model)
+        {
+            if (new SessionUtils().EmptySession())
+            {
+                return View("LogIn");
+            }
+
+            var profile = new UserProfileDataModel();
+            profile.UserId = Globals.UserId;
+            profile.Name  = model.Name;
+            profile.Surname = model.Surname;
+            profile.LastEditDate = DateTime.Now;
+            DB.Add(profile);
+            DB.SaveChanges();
+
+            return View(model);
         }
 
         public IActionResult LogOut()

@@ -5,11 +5,12 @@
 }
 
 <h1> Log In </h1>
+<br/>
 
 <form method="POST" asp-controller="User" asp-action="LogIn">
-    <input placeholder="e-mail" autocomplete="off" type="email" name="email"><br><br>
-    <input placeholder="password" autocomplete="off" type="password" name="pwd"><br><br><br>
-    <input type="submit" name="Log In">
+    <input class="form-control" style="max-width:20em;" placeholder="e-mail" autocomplete="off" type="email" name="email"><br><br>
+    <input class="form-control" style="max-width:20em;" placeholder="password" autocomplete="off" type="password" name="pwd"><br><br><br>
+    <input type="submit" class="btn btn-dark" name="Log In">
 </form>
 
 

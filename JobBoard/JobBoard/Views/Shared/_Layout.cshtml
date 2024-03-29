@@ -32,12 +32,6 @@
                         @{
                             if (HttpContextAccessor?.HttpContext?.Session.GetString("Id") == null)
                             {
-                                @* <li class="nav-item"> *@
-                                @*     <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="LogIn"> Log In </a> *@
-                                @* </li> *@
-                                @* <li class="nav-item"> *@
-                                @*     <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="LogOn"> Log On </a> *@
-                                @* </li> *@
                                 <li class="nav-item">
                                     <div class="dropdown">
                                         <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="LogIn"> Log In </a>
@@ -70,20 +64,14 @@
                                             <a class="dropbtn nav-link text-dark">@HttpContextAccessor?.HttpContext.Session.GetString("Email")</a>
                                             <div class="dropdown-content">
                                                 <a asp-controller="JobApply" asp-action="AppliedJobs">Applied Jobs</a>
-                                                <a>Profile</a>
+                                                <a asp-controller="User" asp-action="UserProfile">Profile</a>
                                                 <a asp-controller="User" asp-action="LogOut">Log Out</a>
                                             </div>
                                         </div>
                                     </li>
                                 }
-                                @* <li> *@
-                                @*     <a class="nav-link text-dark" asp-controller="User" asp-action="LogOut">Log Out</a> *@
-                                @* </li> *@
                             }
                         }
-                        @* <li class="nav-item"> *@
-                        @*     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
-                        @* </li> *@
                     </ul>
                 </div>
             </div>

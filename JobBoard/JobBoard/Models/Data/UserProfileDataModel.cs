@@ -5,7 +5,7 @@ namespace JobBoard.Models.Data{
         [Key]
         public int Id { get; set; }
 
-        public string UserId { get; set; } = null!;
+        public int UserId { get; set; }
         public string Name { get; set; } = null!;
         public string Surname {get;set;} = null!;
         public DateTime LastEditDate { get; set; }

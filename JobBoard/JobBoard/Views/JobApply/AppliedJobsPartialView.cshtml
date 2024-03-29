@@ -15,8 +15,8 @@
                          Model.AppliedJobList.Count().ToString() + " applications. ("+filterText+")":
                          Model.AppliedJobList.Count().ToString() + " application. ("+filterText+")")</h3>
         <br/><br/>
-        <p>Filters: </p> 
-        <select id="statusSelect" onchange="appliedJobFilter('@Url.Action("AppliedJobsPartialView")')">
+        <p>Filters: </p>
+        <select class="form-control" style="max-width:10em;" id="statusSelect" onchange="appliedJobFilter('@Url.Action("AppliedJobsPartialView")')">
             <option id="statusOption" selected="@(Model.FilterStatus == null)" > select one </option>
             @foreach (var item in Enum.GetValues(typeof(ApplicationStatusEnum)))
             {
