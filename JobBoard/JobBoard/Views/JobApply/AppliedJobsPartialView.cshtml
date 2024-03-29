@@ -5,13 +5,15 @@
 }
 @using JobBoard.Enums
 @model JobBoard.Models.View.AppliedJobsPartialViewModel
+
 <div>
 
     @if (Model.AppliedJobList != null)
     {
+        var filterText = Model.FilterStatus == null ? "All" : Model.FilterStatus.ToString();
         <h3>You have @(Model.AppliedJobList.Count() > 1?
-                         Model.AppliedJobList.Count().ToString() + " applications.":
-                         Model.AppliedJobList.Count().ToString() + " application.")</h3>
+                         Model.AppliedJobList.Count().ToString() + " applications. ("+filterText+")":
+                         Model.AppliedJobList.Count().ToString() + " application. ("+filterText+")")</h3>
         <br/><br/>
         <p>Filters: </p> 
         <select id="statusSelect" onchange="appliedJobFilter('@Url.Action("AppliedJobsPartialView")')">
