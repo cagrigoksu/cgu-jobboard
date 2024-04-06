@@ -8,9 +8,11 @@ builder.Services.AddControllersWithViews();
 
 // PostgreSQL Configuration
 var configuration = builder.Configuration;
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+// AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+// builder.Services.AddDbContext<AppDbContext>(options =>
+//     options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(configuration.GetConnectionString("AzureSQLConnection")));
 
 // Session
 builder.Services.AddHttpContextAccessor();
