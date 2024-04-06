@@ -10,9 +10,9 @@ namespace JobBoard_React.Server.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly AppDbContext DB;
+        private readonly JobboardContext DB;
 
-        public HomeController(ILogger<HomeController> logger, AppDbContext context)
+        public HomeController(ILogger<HomeController> logger, JobboardContext context)
         {
             _logger = logger;
             DB = context;

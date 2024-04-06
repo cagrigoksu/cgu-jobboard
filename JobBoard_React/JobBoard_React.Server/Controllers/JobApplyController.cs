@@ -12,10 +12,10 @@ namespace JobBoard_React.Server.Controllers
 {
     public class JobApplyController : Controller
     {
-        private readonly AppDbContext DB;
+        private readonly JobboardContext DB;
         private readonly IHostEnvironment env;
 
-        public JobApplyController(AppDbContext context, IHostEnvironment? env)
+        public JobApplyController(JobboardContext context, IHostEnvironment? env)
         {
             DB = context;
             this.env = env;

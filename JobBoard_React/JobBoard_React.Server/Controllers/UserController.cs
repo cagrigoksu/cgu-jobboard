@@ -13,9 +13,9 @@ namespace JobBoard_React.Server.Controllers
     public class UserController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly AppDbContext DB;
+        private readonly JobboardContext DB;
 
-        public UserController(ILogger<HomeController> logger, AppDbContext context)
+        public UserController(ILogger<HomeController> logger, JobboardContext context)
         {
             DB = context;
             _logger = logger;

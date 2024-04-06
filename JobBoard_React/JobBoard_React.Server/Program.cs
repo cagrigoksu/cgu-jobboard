@@ -10,11 +10,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// PostgreSQL Configuration
+// Azure SQL Configuration
 var configuration = builder.Configuration;
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<JobboardContext>(options =>
+    options.UseSqlServer(configuration.GetConnectionString("AzureSQLConnection")));
 
 // Session
 builder.Services.AddHttpContextAccessor();
