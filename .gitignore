@@ -4,6 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 JobBoard/JobBoard/Uploads/Resumes/
+JobBoard/JobBoard/appsettings.json
+JobBoard_React/JobBoard_React.Server/appsettings.json
 
 # User-specific files
 *.rsuser
