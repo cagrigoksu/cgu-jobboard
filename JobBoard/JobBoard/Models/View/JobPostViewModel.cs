@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using JobBoard.Enums;
-using JobBoard.Models.Data;
+﻿using JobBoard.Models.Data;
 
 namespace JobBoard.Models.View
 {
@@ -23,6 +21,6 @@ namespace JobBoard.Models.View
 
         public bool Edit { get; set; }
         public bool Detail { get; set; }
-        public IQueryable<JobPostViewModel> jobs { get; set; }
+        public IQueryable<JobPostDataModel> jobs { get; set; }
     }
 }

@@ -1,28 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using JobBoard.DataContext;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using JobBoard.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using JobBoard.Models.Data;
 using JobBoard.Models.View;
-using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using JobBoard.Models.Classes;
+using JobBoard.Repositories.Interfaces;
 
 namespace JobBoard.Controllers
 {
     public class UserController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly AppDbContext DB;
+        private readonly IUserRepository? _userRepository;
+        private readonly IJobPostRepository? _jobPostRepository;
 
-        public UserController(ILogger<HomeController> logger, AppDbContext context)
+        public UserController(IUserRepository userRepository, IJobPostRepository jobPostRepository)
         {
-            DB = context;
-            _logger = logger;
+            _userRepository = userRepository;
+            _jobPostRepository = jobPostRepository;
         }
         
         public IActionResult LogIn()
@@ -34,8 +26,8 @@ namespace JobBoard.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult LogIn(string email, string pwd)
         {
-            var user = DB.Users.
-                FirstOrDefault(x => x.Email == email && x.Password == pwd);
+            var user = _userRepository.GetUser(email, pwd);
+
             if (user != null)
             {
                 Globals.UserId = user.Id;
@@ -44,7 +36,7 @@ namespace JobBoard.Controllers
                 HttpContext.Session.SetString("Email", user.Email);
                 HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
 
-                var jobPosts = new HomeController(_logger,DB).BringAllJobs();
+                var jobPosts = _jobPostRepository.GetAllJobPosts();
                 return View("Index", new IndexViewModel(){UserId = user.Id, CompanyUser = user.CompanyUser,JobPosts = jobPosts});
             }
             else
@@ -62,20 +54,19 @@ namespace JobBoard.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult LogOn(IFormCollection formCollection)
         {
-            UserDataModel user = new()
+            if (formCollection["pwd"] == formCollection["pwdConf"])
             {
-                Email = formCollection["email"],
-                Password = formCollection["pwd"],
-                CompanyUser = formCollection["hiring"] == "on"
-            };
+                var user = new UserDataModel()
+                {
+                    Email = formCollection["email"],
+                    Password = formCollection["pwd"],
+                    CompanyUser = formCollection["hiring"] == "on",
+                };
 
-            if (user.Password == formCollection["pwdConf"])
-            {   
-                user.LogOnDate = DateTime.Now;
-                DB.Add(user);
-                DB.SaveChanges();
+                _userRepository.AddUser(user);
 
-                var userResult = DB.Users.FirstOrDefault(x => x.Email == user.Email);
+                var userResult = _userRepository.GetUser(user.Email, user.Password);
+                
                 if (userResult != null)
                 {
                     Globals.UserId = user.Id;
@@ -83,7 +74,7 @@ namespace JobBoard.Controllers
                     HttpContext.Session.SetString("Email", user.Email);
                     HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
 
-                    var jobPosts = new HomeController(_logger, DB).BringAllJobs();
+                    var jobPosts = _jobPostRepository.GetAllJobPosts();
                     return View("Index", new IndexViewModel() { JobPosts = jobPosts });
                 }
                 else
@@ -104,8 +95,9 @@ namespace JobBoard.Controllers
                 return View("LogIn");
             }
 
-            var profile = DB.UserProfiles.FirstOrDefault(x => x.UserId == Globals.UserId);
             var result = new UserProfileViewModel();
+
+            var profile = _userRepository.GetUserProfile(new UserProfileDataModel(){Id = Globals.UserId });
 
             if (profile != null)
             {
@@ -128,9 +120,8 @@ namespace JobBoard.Controllers
             profile.UserId = Globals.UserId;
             profile.Name  = model.Name;
             profile.Surname = model.Surname;
-            profile.LastEditDate = DateTime.Now;
-            DB.Add(profile);
-            DB.SaveChanges();
+
+            _userRepository.AddUserProfile(profile);
 
             return View(model);
         }

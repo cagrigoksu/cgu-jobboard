@@ -1,26 +1,26 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using JobBoard.DataContext;
+﻿using JobBoard.DataContext;
 using JobBoard.Enums;
-using JobBoard.Models;
 using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
 using JobBoard.Models.View;
+using JobBoard.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting.Internal;
-using NuGet.Protocol;
 
 namespace JobBoard.Controllers
 {
     public class JobApplyController : Controller
     {
-        private readonly AppDbContext DB;
         private readonly IHostEnvironment env;
+        private readonly IJobPostRepository? _jobPostRepository;
+        private readonly IJobApplicationRepository? _jobApplicationRepository;
 
-        public JobApplyController(AppDbContext context, IHostEnvironment? env)
+        public JobApplyController(IHostEnvironment env, IJobPostRepository? jobPostRepository, IJobApplicationRepository? jobApplicationRepository)
         {
-            DB = context;
             this.env = env;
+            _jobPostRepository = jobPostRepository;
+            _jobApplicationRepository = jobApplicationRepository;
         }
+
         public IActionResult ApplyToJob(int? id)
         {
             if (new SessionUtils().EmptySession())
@@ -33,7 +33,8 @@ namespace JobBoard.Controllers
                 return NotFound();
             }
 
-            var jobDetails = DB.JobPosts.Find(id);
+            var jobDetails = _jobPostRepository.GetJobPost(id.Value);
+
             var view = new JobApplyViewModel
             {
                 JobId = id.Value,
@@ -56,8 +57,6 @@ namespace JobBoard.Controllers
                 return View("LogIn");
             }
 
-            var jobPosts = new HomeController(null, DB).BringAllJobs();
-
             string filenameMotivation = "";
 
             if (view.CV != null)
@@ -73,16 +72,15 @@ namespace JobBoard.Controllers
 
                 var jobApp = new JobApplicationDataModel()
                 {
-                    ApplicationDate = DateTime.Now,
                     JobId = view.JobId,
                     ApplicantId = Globals.UserId,
                     UrlResume = Path.Combine(path, filenameCV),
                     UrlMotivationLetter = ""
             };
 
-                DB.Add(jobApp);
-                DB.SaveChanges();
-                
+                _jobApplicationRepository.AddJobApplication(jobApp);
+
+                var jobPosts = _jobPostRepository.GetAllJobPosts();
                 return View("Index", new IndexViewModel() { UserId = Globals.UserId, CompanyUser = Globals.CompanyUser, JobPosts = jobPosts });
             }
 
@@ -93,21 +91,7 @@ namespace JobBoard.Controllers
         [HttpGet]
         public IActionResult AppliedJobsPartialView(ApplicationStatusEnum? status)
         {
-            var jobList = from post in DB.JobPosts
-                    join application in DB.JobApplications on post.Id equals application.JobId
-                    where application.ApplicantId == Globals.UserId 
-                        && !application.IsDeleted 
-                        && !post.IsDeleted
-                    select new AppliedJobsListModel()
-                    {
-                        Title = post.Title,
-                        ApplicationDate = application.ApplicationDate,
-                        City = post.City,
-                        CompanyId = post.CompanyId,
-                        Id = application.Id,
-                        JobId = application.JobId,
-                        Status = application.Status
-                    };
+            var jobList = _jobApplicationRepository.GetUserBasedJobApplications(Globals.UserId);
 
             if (status != null)
             {
@@ -128,22 +112,7 @@ namespace JobBoard.Controllers
                 return View("LogIn");
             }
 
-            var jobList =
-                from j in DB.JobPosts
-                join i in DB.JobApplications on j.Id equals i.JobId 
-                where i.ApplicantId == Globals.UserId 
-                    && !i.IsDeleted 
-                    && !j.IsDeleted
-                select new AppliedJobsListModel()
-                {
-                    Id = i.Id,
-                    JobId = i.JobId,
-                    Title = j.Title,
-                    ApplicationDate = i.ApplicationDate,
-                    City = j.City,
-                    CompanyId = j.CompanyId,
-                    Status = i.Status
-                };
+            var jobList = _jobApplicationRepository.GetUserBasedJobApplications(Globals.UserId);
 
             return View(new AppliedJobsViewModel(){AppliedJobList = jobList, });
         }

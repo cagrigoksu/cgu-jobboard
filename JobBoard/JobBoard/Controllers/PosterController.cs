@@ -1,25 +1,23 @@
-﻿using System.Collections;
+﻿using System.Collections.Immutable;
 using JobBoard.DataContext;
-using JobBoard.Enums;
-using JobBoard.Models;
 using Microsoft.AspNetCore.Mvc;
 using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
 using JobBoard.Models.View;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using JobBoard.Repositories.Interfaces;
+using System.Diagnostics.Metrics;
 
 namespace JobBoard.Controllers
 {
     public class PosterController:Controller
     {
-        private readonly AppDbContext DB;
+        private readonly IJobPostRepository _jobPostRepository;
 
-        public PosterController(AppDbContext context)
+        public PosterController(IJobPostRepository jobPostRepository)
         {
-            DB = context;
+            _jobPostRepository = jobPostRepository;
         }
+
 
         public IActionResult  Dashboard()
         {
@@ -28,17 +26,9 @@ namespace JobBoard.Controllers
                  return View("LogIn");
              }
 
-             var jobPosts = from j in DB.JobPosts
-                 where j.CreatedUserId == Globals.UserId
-                 select new JobPostViewModel
-                 {
-                     Id = j.Id,
-                     Title = j.Title,
-                     Description = j.Description,
-                     PostDate = j.PostDate
-                 };
+             var jobPosts = _jobPostRepository.GetUserBasedJobPosts(Globals.UserId);
 
-            return View(new JobPostViewModel(){jobs = jobPosts});
+             return View(new JobPostViewModel(){jobs = jobPosts});
         }
 
         public IActionResult AddJobPost()
@@ -54,21 +44,11 @@ namespace JobBoard.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public IActionResult AddJobPost(JobPostDataModel post)
         {
-            post.PostDate = DateTime.Now;
-            post.CreatedUserId = Globals.UserId;
+            _jobPostRepository.AddJobPost(post);
 
-            DB.Add(post);
-            DB.SaveChanges();
+            
 
-            var jobPosts = from j in DB.JobPosts
-                where j.CreatedUserId == Globals.UserId
-                select new JobPostViewModel
-                {
-                    Id = j.Id,
-                    Title = j.Title,
-                    Description = j.Description,
-                    PostDate = j.PostDate
-                };
+            var jobPosts = _jobPostRepository.GetUserBasedJobPosts(Globals.UserId);
 
             return View("Dashboard",new JobPostViewModel() { jobs = jobPosts });
         }
@@ -86,7 +66,8 @@ namespace JobBoard.Controllers
                 return NotFound();
             }
 
-            var job = DB.JobPosts.SingleOrDefault(x => x.Id == id);
+            var job = _jobPostRepository.GetJobPost(id);
+
             var result = new JobPostViewModel()
             {
                 Detail = detail,
@@ -107,7 +88,7 @@ namespace JobBoard.Controllers
                 return View("LogIn");
             }
 
-            var job = DB.JobPosts.SingleOrDefault(x => x.Id == id);
+            var job = _jobPostRepository.GetJobPost(id);
             var result = new JobPostViewModel()
                 {
                     Edit = edit,
@@ -124,26 +105,17 @@ namespace JobBoard.Controllers
         [HttpPost]
         public IActionResult EditJobPost(JobPostViewModel post)
         {
-            var dbPost = DB.JobPosts.First(x => x.Id == post.Id);
-
-            dbPost.Title = post.Title;
-            dbPost.Description = post.Description;
-            dbPost.LevelId = post.LevelId;
-            dbPost.Country = post.Country;
-            dbPost.City = post.City;
-
-            DB.Update(dbPost);
-            DB.SaveChanges();
-
-            var jobPosts = from j in DB.JobPosts
-                where j.CreatedUserId == Globals.UserId
-                select new JobPostViewModel
-                {
-                    Id = j.Id,
-                    Title = j.Title,
-                    Description = j.Description,
-                    PostDate = j.PostDate
-                };
+            _jobPostRepository.UpdateJobPost(new JobPostDataModel()
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Description = post.Description,
+                LevelId = post.LevelId,
+                Country = post.Country,
+                City = post.City,
+              });
+            
+            var jobPosts = _jobPostRepository.GetUserBasedJobPosts(Globals.UserId);
 
             return View("Dashboard", new JobPostViewModel() { jobs = jobPosts });
         }
@@ -151,20 +123,9 @@ namespace JobBoard.Controllers
         [HttpPost]
         public IActionResult DeleteJobPost(int id)
         {
-            var post = DB.JobPosts.Find(id);
-            if (post != null)
-            {
-                DB.JobPosts.Remove(post);
-            }
-            DB.SaveChanges();
+            _jobPostRepository.DeleteJobPost(id);
 
-            var jobPosts = from j in DB.JobPosts
-                                                    where j.CreatedUserId == Globals.UserId
-                                                    select new JobPostViewModel { 
-                                                        Id = j.Id, 
-                                                        Title = j.Title, 
-                                                        Description = j.Description, 
-                                                        PostDate = j.PostDate};
+            var jobPosts = _jobPostRepository.GetUserBasedJobPosts(Globals.UserId);
 
             return View("Dashboard", new JobPostViewModel(){jobs = jobPosts} );
 

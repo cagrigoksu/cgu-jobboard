@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using JobBoard.Enums;
+﻿using JobBoard.Enums;
 
 namespace JobBoard.Models.Classes
 {

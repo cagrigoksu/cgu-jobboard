@@ -1,5 +1,4 @@
 ﻿using JobBoard.Models.Classes;
-using JobBoard.Models.Data;
 
 namespace JobBoard.Models.View
 {

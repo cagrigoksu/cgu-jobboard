@@ -1,38 +1,24 @@
-using JobBoard.Models;
 using JobBoard.Models.Classes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using JobBoard.DataContext;
 using JobBoard.Models.View;
+using JobBoard.Repositories.Interfaces;
 
 namespace JobBoard.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly AppDbContext DB;
+        private readonly IJobPostRepository? _jobPostRepository;
+        private readonly IJobApplicationRepository? _jobApplicationRepository;
+        private readonly IDBUtilsRepository? _dbUtilsRepository;
 
-        public HomeController(ILogger<HomeController> logger, AppDbContext context)
+        public HomeController(IJobPostRepository? jobPostRepository, IJobApplicationRepository? jobApplicationRepository, IDBUtilsRepository? dbUtilsRepository)
         {
-            _logger = logger;
-            DB = context;
+            _jobPostRepository = jobPostRepository;
+            _jobApplicationRepository = jobApplicationRepository;
+            _dbUtilsRepository = dbUtilsRepository;
         }
 
-        public IQueryable<IndexViewModel> BringAllJobs()
-        {
-            var jobPosts = from j in DB.JobPosts
-                select new IndexViewModel
-                {
-                    JobId = j.Id,
-                    Title = j.Title,
-                    Description = j.Description,
-                    PostDate = j.PostDate
-                };
-
-            return jobPosts;
-        }
-        
         public IActionResult Index()
         {
             if (new SessionUtils().EmptySession())
@@ -40,14 +26,15 @@ namespace JobBoard.Controllers
                 return View("LogIn");
             }
 
-            var jobPosts = BringAllJobs();
+            var jobPosts = _jobPostRepository.GetAllJobPosts();
+
             return View(new IndexViewModel() { UserId = Globals.UserId, CompanyUser = Globals.CompanyUser, JobPosts = jobPosts });
         }
 
         public IActionResult JobPostDetail(int jobId)
         {
-            var job = DB.JobPosts.SingleOrDefault(x => x.Id == jobId);
-            var isApplied = DB.JobApplications.SingleOrDefault(x=>x.ApplicantId== Globals.UserId);
+            var job = _jobPostRepository.GetJobPost(jobId);
+            var isApplied = _jobApplicationRepository.GetUserJobApplication(Globals.UserId);
 
             var result = new JobApplyViewModel()
             {
@@ -56,8 +43,7 @@ namespace JobBoard.Controllers
                 LevelId = job.LevelId,
                 Country = job.Country,
                 City = job.City,
-                Description = job.Description,
-                
+                Description = job.Description
             };
 
             if (isApplied != null)
@@ -73,26 +59,16 @@ namespace JobBoard.Controllers
             return View();
         }
 
+        [HttpGet]
+        public bool DbStatusCheck()
+        {
+            return _dbUtilsRepository.DBConnectionCheck();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        [HttpGet]
-        public bool DbStatusCheck()
-        {
-            var job = DB.Users.First();
-            try
-            {
-                return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
-
         }
     }
 }

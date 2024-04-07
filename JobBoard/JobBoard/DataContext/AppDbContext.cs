@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using JobBoard.Models.Data;
 
 namespace JobBoard.DataContext

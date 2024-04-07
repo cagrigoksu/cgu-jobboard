@@ -1,4 +1,4 @@
-﻿@model JobBoard.Models.IndexViewModel
+﻿@model JobBoard.Models.View.IndexViewModel
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 
@@ -18,10 +18,13 @@
             @Html.DisplayNameFor(model => model.JobId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.DisplayNameFor(model => model.JobTitle)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PostDate)
+            Location
+        </th>
+        <th>
+                @Html.DisplayNameFor(model => model.JobPostDate)
         </th>
         <th></th>
     </tr>
@@ -30,10 +33,13 @@
     @foreach (var item in Model.JobPosts) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.JobId)
+                @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @item.City, @item.Country
             </td>
             <td>
                 @{
@@ -46,7 +52,7 @@
                 if (!Model.CompanyUser)
                 {
                     <td>
-                        <input type="button" value="details" class="btn btn-outline-info" onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId=item.JobId})','Job details')" />
+                        <input type="button" value="details" class="btn btn-outline-info" onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId=item.Id})','Job details')" />
 
                         @* <a asp-action="" asp-route-id="@item.JobId" onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId = item.JobId})','Job details')">Details</a> *@
                         @* <input type="button" value="delete this post" onclick="showPop('@Url.Action("DeleteConfirmation", "Poster", new {deleteId=Model.Id})','Attention!')" /> *@
