@@ -40,6 +40,9 @@
                     }
                 }
             </select>
+            <br>
+            <input class="btn btn-danger" type="button" value="withdraw application" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("WithdrawJobApplication", "JobApply", new {jobId = Model.JobId })+"'")" />
+
         }
         else
         {

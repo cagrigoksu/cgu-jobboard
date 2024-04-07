@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.IO;
 using JobBoard.Enums;
 using JobBoard.Models.Classes;
+using Microsoft.Extensions.Hosting;
 
 namespace JobBoard.Repositories
 {
@@ -19,7 +20,9 @@ namespace JobBoard.Repositories
 
         public JobApplicationDataModel GetUserJobApplication(int userId, int jobId)
         {
-            var application = _db.JobApplications.SingleOrDefault(x => x.ApplicantId == userId && x.JobId == jobId);
+            var application = _db.JobApplications.SingleOrDefault(x => x.ApplicantId == userId 
+                                                                       && x.JobId == jobId
+                                                                       && x.IsDeleted == false);
             return application;
         }
 
@@ -51,6 +54,18 @@ namespace JobBoard.Repositories
                 };
 
             return jobList;
+        }
+
+        public void WithdrawJobApplication(int jobId)
+        {
+            var dbPost = _db.JobApplications.First(x => x.Id == jobId && x.IsDeleted == false);
+
+            dbPost.DeleteDate = DateTime.Now;
+            dbPost.IsDeleted = true;
+            dbPost.DeleteUser = Globals.UserId;
+
+            _db.Update(dbPost);
+            _db.SaveChanges();
         }
     }
 }

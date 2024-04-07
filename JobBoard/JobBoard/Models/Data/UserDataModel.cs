@@ -13,5 +13,6 @@ namespace JobBoard.Models.Data
         public DateTime LogOnDate { get; set; }
         public bool IsDeleted { get; set; } = false;
         public DateTime? DeleteDate { get; set; }
+        public int DeleteUser { get; set; }
     }
 }

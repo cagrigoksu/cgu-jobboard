@@ -116,5 +116,14 @@ namespace JobBoard.Controllers
 
             return View(new AppliedJobsViewModel(){AppliedJobList = jobList, });
         }
+
+        public IActionResult WithdrawJobApplication(int jobId)
+        {
+            _jobApplicationRepository.WithdrawJobApplication(jobId);
+
+            var jobPosts = _jobPostRepository.GetAllJobPosts();
+            return View("Index", new IndexViewModel() { UserId = Globals.UserId, CompanyUser = Globals.CompanyUser, JobPosts = jobPosts });
+
+        }
     }
 }
