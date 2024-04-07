@@ -68,7 +68,7 @@ namespace JobBoard.Controllers
             return PartialView("JobDetailPartialView", result);
         }
 
-        public IActionResult Privacy()
+        public IActionResult Status()
         {
             return View();
         }
@@ -78,6 +78,21 @@ namespace JobBoard.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpGet]
+        public bool DbStatusCheck()
+        {
+            var job = DB.Users.First();
+            try
+            {
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
         }
     }
 }

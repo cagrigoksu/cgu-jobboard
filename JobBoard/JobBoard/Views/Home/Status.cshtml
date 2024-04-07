@@ -1,0 +1,8 @@
+﻿@{
+    ViewData["Title"] = "Status";
+}
+<h1>@ViewData["Title"]</h1>
+
+<input type="button" onclick="dbConnectionCheck('@Url.Action("DbStatusCheck", "Home")')" value="Check DB Connection" class="btn btn-info" />
+<br/><br />
+<p id="dbStatus"></p>

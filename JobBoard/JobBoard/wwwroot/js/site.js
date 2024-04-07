@@ -54,3 +54,23 @@ appliedJobFilter = (url) => {
     });
 
 }
+
+dbConnectionCheck = (url) => {
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        data: {},
+        success: function (result) {
+            if (result)
+            {
+                $("#dbStatus").text("DB Connection OK!")
+            }
+            else
+            {
+                $("#dbStatus").text("DB Connection ERROR!")
+            }
+        }
+    });
+
+}
