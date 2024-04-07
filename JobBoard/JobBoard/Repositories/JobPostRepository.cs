@@ -15,7 +15,7 @@ namespace JobBoard.Repositories
         
         public IQueryable<JobPostDataModel> GetAllJobPosts()
         {
-            var jobPosts = from post in _db.JobPosts select post;
+            var jobPosts = from post in _db.JobPosts where post.IsDeleted == false select post;
 
             return jobPosts;
         }
@@ -24,14 +24,15 @@ namespace JobBoard.Repositories
         {
             var jobPosts = from jobPost in _db.JobPosts
                 where jobPost.CreatedUserId == userId
-                select jobPost;
+                    && jobPost.IsDeleted == false
+                           select jobPost;
 
             return jobPosts;
         }
 
         public JobPostDataModel GetJobPost(int id)
         {
-            var job = _db.JobPosts.SingleOrDefault(x => x.Id == id);
+            var job = _db.JobPosts.SingleOrDefault(x => x.Id == id && x.IsDeleted == false);
             return job;
         }
 
@@ -61,10 +62,15 @@ namespace JobBoard.Repositories
         public void DeleteJobPost(int id)
         {
             var post = _db.JobPosts.Find(id);
-            if (post != null)
-            {
-                _db.Remove(post);
-            }
+            // if (post != null)
+            // {
+            //     _db.Remove(post);
+            // }
+            post.IsDeleted = true;
+            post.DeleteUser = Globals.UserId;
+            post.DeleteDate = DateTime.Now;
+
+            _db.Update(post);
             _db.SaveChanges();
         }
     }

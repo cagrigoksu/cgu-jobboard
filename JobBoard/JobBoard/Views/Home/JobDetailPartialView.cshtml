@@ -10,9 +10,9 @@
 <input hidden asp-for="JobId" value="@Model.JobId" />
 
 <div>
-    <input placeholder="Job Title" type="text" name="title" asp-for="Title" value="@(String.IsNullOrEmpty(Model.Title)? "" : Model.Title)" required readonly>
-    <br><br />
-    <select asp-for="LevelId" disabled>
+    <input class="form-control" placeholder="Job Title" type="text" name="title" asp-for="Title" value="@(String.IsNullOrEmpty(Model.Title)? "" : Model.Title)" required readonly>
+    <br>
+    <select class="form-control" asp-for="LevelId" disabled>
         @{
             foreach (var enumItem in Enum.GetValues(typeof(JobLevelEnum)))
             {
@@ -20,19 +20,19 @@
             }
         }
     </select>
-    <br><br />
-    <input placeholder="Country" asp-for="Country" value="@(String.IsNullOrEmpty(Model.Country)?"": Model.Country)" required readonly/>
-    <br><br />
-    <input placeholder="City" asp-for="City" value="@(String.IsNullOrEmpty(Model.City)?"": Model.City)" required readonly/>
-    <br><br />
-    <textarea asp-for="Description" rows="4" cols="50" readonly>@(String.IsNullOrEmpty(Model.Description) ? "" : Model.Description)</textarea>
+    <br>
+    <input class="form-control" placeholder="Country" asp-for="Country" value="@(String.IsNullOrEmpty(Model.Country)?"": Model.Country)" required readonly />
+    <br>
+    <input class="form-control" placeholder="City" asp-for="City" value="@(String.IsNullOrEmpty(Model.City)?"": Model.City)" required readonly />
+    <br>
+    <textarea class="form-control" asp-for="Description" rows="4" cols="50" readonly>@(String.IsNullOrEmpty(Model.Description) ? "" : Model.Description)</textarea>
 
-    <br><br /><br><br />
+    <br>
     @{
         if (Model.isApplied)
         {
             <p>You have already applied to this job. Status: </p>
-            <select asp-for="Status" disabled>
+            <select class="form-control" asp-for="Status" disabled>
                 @{
                     foreach (var enumItem in Enum.GetValues(typeof(ApplicationStatusEnum)))
                     {
@@ -40,10 +40,13 @@
                     }
                 }
             </select>
+            <br>
+            <input class="btn btn-danger" type="button" value="withdraw application" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("WithdrawJobApplication", "JobApply", new {jobId = Model.JobId })+"'")" />
+
         }
         else
         {
-            <input type="button" value="apply" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("ApplyToJob", "JobApply", new {id = Model.JobId })+"'")" />
+            <input class="btn btn-primary" type="button" value="apply" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("ApplyToJob", "JobApply", new {id = Model.JobId })+"'")" />
         }
     }
    

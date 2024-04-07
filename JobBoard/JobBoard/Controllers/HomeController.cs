@@ -34,7 +34,7 @@ namespace JobBoard.Controllers
         public IActionResult JobPostDetail(int jobId)
         {
             var job = _jobPostRepository.GetJobPost(jobId);
-            var isApplied = _jobApplicationRepository.GetUserJobApplication(Globals.UserId);
+            var isApplied = _jobApplicationRepository.GetUserJobApplication(Globals.UserId, jobId);
 
             var result = new JobApplyViewModel()
             {

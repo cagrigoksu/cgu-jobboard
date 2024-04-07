@@ -17,5 +17,6 @@ namespace JobBoard.Models.Data
         public ApplicationStatusEnum Status { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime? DeleteDate { get; set; }
+        public int DeleteUser { get; set; }
     }
 }

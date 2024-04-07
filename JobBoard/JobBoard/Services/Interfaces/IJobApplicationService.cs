@@ -1,10 +1,9 @@
-﻿using JobBoard.Enums;
-using JobBoard.Models.Classes;
+﻿using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
 
-namespace JobBoard.Repositories.Interfaces
+namespace JobBoard.Services.Interfaces
 {
-    public interface IJobApplicationRepository
+    public interface IJobApplicationService
     {
         JobApplicationDataModel GetUserJobApplication(int userId, int jobId);
         void AddJobApplication(JobApplicationDataModel jobApplication);

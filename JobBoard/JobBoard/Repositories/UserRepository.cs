@@ -15,14 +15,14 @@ namespace JobBoard.Repositories
         public UserDataModel GetUser(string email, string pwd)
         {
             var user = _db.Users.
-                FirstOrDefault(x => x.Email == email && x.Password == pwd);
+                FirstOrDefault(x => x.Email == email && x.Password == pwd && x.IsDeleted == false);
 
             return user;
         }
 
         public UserProfileDataModel GetUserProfile(UserProfileDataModel userProfile)
         {
-            var profile = _db.UserProfiles.FirstOrDefault(x => x.UserId == userProfile.Id);
+            var profile = _db.UserProfiles.FirstOrDefault(x => x.UserId == userProfile.Id && x.IsDeleted == false);
 
             return profile;
         }
@@ -43,7 +43,14 @@ namespace JobBoard.Repositories
 
         public void DeleteUser(int id)
         {
-            throw new NotImplementedException();
+            var user = _db.Users.Find(id);
+
+            user.IsDeleted = true;
+            user.DeleteUser = Globals.UserId;
+            user.DeleteDate = DateTime.Now;
+
+            _db.Update(user);
+            _db.SaveChanges();
         }
     }
 }
