@@ -3,18 +3,20 @@ using JobBoard.Models.Data;
 using JobBoard.Models.View;
 using JobBoard.Models.Classes;
 using JobBoard.Repositories.Interfaces;
+using JobBoard.Services;
+using JobBoard.Services.Interfaces;
 
 namespace JobBoard.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IUserRepository? _userRepository;
         private readonly IJobPostRepository? _jobPostRepository;
+        private readonly IUserService? _userService;
 
-        public UserController(IUserRepository userRepository, IJobPostRepository jobPostRepository)
+        public UserController(IJobPostRepository jobPostRepository, IUserService? userService)
         {
-            _userRepository = userRepository;
             _jobPostRepository = jobPostRepository;
+            _userService = userService;
         }
         
         public IActionResult LogIn()
@@ -26,7 +28,7 @@ namespace JobBoard.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult LogIn(string email, string pwd)
         {
-            var user = _userRepository.GetUser(email, pwd);
+            var user = _userService.GetUser(email, pwd);
 
             if (user != null)
             {
@@ -63,9 +65,9 @@ namespace JobBoard.Controllers
                     CompanyUser = formCollection["hiring"] == "on",
                 };
 
-                _userRepository.AddUser(user);
+                _userService.AddUser(user);
 
-                var userResult = _userRepository.GetUser(user.Email, user.Password);
+                var userResult = _userService.GetUser(user.Email, user.Password);
                 
                 if (userResult != null)
                 {
@@ -97,7 +99,7 @@ namespace JobBoard.Controllers
 
             var result = new UserProfileViewModel();
 
-            var profile = _userRepository.GetUserProfile(new UserProfileDataModel(){Id = Globals.UserId });
+            var profile = _userService.GetUserProfile(new UserProfileDataModel(){Id = Globals.UserId });
 
             if (profile != null)
             {
@@ -121,7 +123,7 @@ namespace JobBoard.Controllers
             profile.Name  = model.Name;
             profile.Surname = model.Surname;
 
-            _userRepository.AddUserProfile(profile);
+            _userService.AddUserProfile(profile);
 
             return View(model);
         }

@@ -1,6 +1,8 @@
 using JobBoard.DataContext;
 using JobBoard.Repositories;
 using JobBoard.Repositories.Interfaces;
+using JobBoard.Services;
+using JobBoard.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +34,7 @@ builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>(
 builder.Services.AddScoped<IJobPostRepository, JobPostRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
