@@ -6,7 +6,7 @@ namespace JobBoard.Repositories.Interfaces
 {
     public interface IJobApplicationRepository
     {
-        JobApplicationDataModel GetUserJobApplication(int id);
+        JobApplicationDataModel GetUserJobApplication(int userId, int jobId);
         void AddJobApplication(JobApplicationDataModel jobApplication);
         IQueryable<AppliedJobsListModel> GetUserBasedJobApplications(int userId);
     }

@@ -17,9 +17,9 @@ namespace JobBoard.Repositories
         }
 
 
-        public JobApplicationDataModel GetUserJobApplication(int userId)
+        public JobApplicationDataModel GetUserJobApplication(int userId, int jobId)
         {
-            var application = _db.JobApplications.SingleOrDefault(x => x.ApplicantId == userId);
+            var application = _db.JobApplications.SingleOrDefault(x => x.ApplicantId == userId && x.JobId == jobId);
             return application;
         }
 

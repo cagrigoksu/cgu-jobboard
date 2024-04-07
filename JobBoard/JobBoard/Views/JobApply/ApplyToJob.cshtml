@@ -7,11 +7,11 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model JobBoard.Models.View.JobApplyViewModel
 <form method="post" asp-action="Apply" asp-controller="JobApply"  enctype="multipart/form-data">
-
+    <h3>Apply for @(String.IsNullOrEmpty(Model.Title)? "" : Model.Title)</h3>
     <input hidden asp-for="JobId" value="@Model.JobId" />
-    <input placeholder="Job Title" type="text" name="title" asp-for="Title" value="@(String.IsNullOrEmpty(Model.Title)? "" : Model.Title)" readonly>
-    <br><br />
-    <select asp-for="LevelId" disabled>
+    <input hidden class="form-control" placeholder="Job Title" type="text" name="title" asp-for="Title" value="@(String.IsNullOrEmpty(Model.Title)? "" : Model.Title)" readonly>
+    <br>
+    <select class="form-control" asp-for="LevelId" disabled>
         @{
             foreach (var enumItem in Enum.GetValues(typeof(JobLevelEnum)))
             {
@@ -19,23 +19,23 @@
             }
         }
     </select>
-    <br><br />
-    <input placeholder="Country" asp-for="Country" value="@(String.IsNullOrEmpty(Model.Country)?"": Model.Country)" readonly/>
-    <br><br />
-    <input placeholder="City" asp-for="City" value="@(String.IsNullOrEmpty(Model.City)?"": Model.City)" readonly/>
-    <br><br />
-    <textarea asp-for="Description" rows="4" cols="50" readonly>@(String.IsNullOrEmpty(Model.Description) ? "" : Model.Description)</textarea>
+    <br>
+    <input class="form-control" placeholder="Country" asp-for="Country" value="@(String.IsNullOrEmpty(Model.Country)?"": Model.Country)" readonly />
+    <br>
+    <input class="form-control" placeholder="City" asp-for="City" value="@(String.IsNullOrEmpty(Model.City)?"": Model.City)" readonly />
+    <br>
+    <textarea class="form-control" asp-for="Description" rows="4" cols="50" readonly>@(String.IsNullOrEmpty(Model.Description) ? "" : Model.Description)</textarea>
 
-    <br><br />
-    <h3>Your Resume</h3>
-    <br /><br />
+    <br>
+    <h5>Your Resume</h5>
+    <br />
     <input type="file" asp-for="CV"/>
     <br><br />
     @* <input type="button" value="edit this post" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("EditJobPost", "Poster", new {id = Model.Id, edit=true })+"'")" /> *@
     @* *@
 
 
-    <input type="submit" value="Apply" />
+    <input type="submit" value="Apply" class="btn btn-success"/>
 </form>
 
 
