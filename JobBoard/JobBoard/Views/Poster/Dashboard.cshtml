@@ -11,7 +11,7 @@
 <input type="button" class="btn btn-warning" value="Post a New Job" onclick="@("window.location.href='" + @Url.Action("AddJobPost", "Poster") + "'");"/>
 <br/>
 
-<table class="table">
+<table class="table table-hover">
     <thead>
     <tr>
         <th>
@@ -40,7 +40,8 @@
             </td>
             <td>
                 <a asp-action="DetailJobPost" asp-route-id="@item.Id" asp-route-detail="@true">Details</a> |
-                <a asp-action="EditJobPost" asp-route-id="@item.Id" asp-route-edit="@true">Edit</a> 
+                <a asp-action="EditJobPost" asp-route-id="@item.Id" asp-route-edit="@true">Edit</a> | 
+                <a asp-action="JobApplicants" asp-route-jobId="@item.Id">Applications</a>
             </td>
         </tr>
     }

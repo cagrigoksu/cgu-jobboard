@@ -6,16 +6,22 @@ using JobBoard.Models.Data;
 using JobBoard.Models.View;
 using JobBoard.Repositories.Interfaces;
 using System.Diagnostics.Metrics;
+using JobBoard.Services.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 
 namespace JobBoard.Controllers
 {
     public class PosterController:Controller
     {
         private readonly IJobPostRepository _jobPostRepository;
+        private readonly IJobApplicationService _jobApplicationService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public PosterController(IJobPostRepository jobPostRepository)
+        public PosterController(IJobPostRepository jobPostRepository, IJobApplicationService jobApplicationService, IWebHostEnvironment webHostEnvironment)
         {
             _jobPostRepository = jobPostRepository;
+            _jobApplicationService = jobApplicationService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
 
@@ -135,5 +141,58 @@ namespace JobBoard.Controllers
         {
             return PartialView("DeleteConfirmationPartialView", new JobPostViewModel(){Id = deleteId});
         }
+
+        [HttpGet]
+        public IActionResult JobApplicants(int jobId)
+        {
+            if (new SessionUtils().EmptySession())
+            {
+                return View("LogIn");
+            }
+
+            var applicant_list = _jobApplicationService.GetJobApplicantsList(jobId);
+            return View(new JobApplicantsViewModel(){Applicants = applicant_list, JobId = jobId});
+        }
+
+        public IActionResult DownloadResumePdf(int jobId, int applicantId)
+        {
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            string outputFilePath = Path.Combine(webRootPath, "Uploads/Resumes/", applicantId.ToString()+"_"+jobId.ToString()+".pdf");
+
+            if (!System.IO.File.Exists(outputFilePath))
+            {
+                // Return a 404 Not Found error if the file does not exist
+                return NotFound();
+            }
+
+            var fileInfo = new System.IO.FileInfo(outputFilePath);
+            Response.ContentType = "application/pdf";
+            Response.Headers.Add("Content-Disposition", "attachment;filename=\"" + fileInfo.Name + "\"");
+            Response.Headers.Add("Content-Length", fileInfo.Length.ToString());
+
+            // Send the file to the client
+            return File(System.IO.File.ReadAllBytes(outputFilePath), "application/pdf", fileInfo.Name);
+        }
+        
+        public IActionResult DownloadMotivationLetterPdf(int jobId, int applicantId)
+        {
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            string outputFilePath = Path.Combine(webRootPath, "Uploads/MotivationLetters/", applicantId.ToString()+"_"+jobId.ToString()+".pdf");
+
+            if (!System.IO.File.Exists(outputFilePath))
+            {
+                // Return a 404 Not Found error if the file does not exist
+                return NotFound();
+            }
+
+            var fileInfo = new System.IO.FileInfo(outputFilePath);
+            Response.ContentType = "application/pdf";
+            Response.Headers.Add("Content-Disposition", "attachment;filename=\"" + fileInfo.Name + "\"");
+            Response.Headers.Add("Content-Length", fileInfo.Length.ToString());
+
+            // Send the file to the client
+            return File(System.IO.File.ReadAllBytes(outputFilePath), "application/pdf", fileInfo.Name);
+        }
+
     }
 }

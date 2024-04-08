@@ -18,5 +18,6 @@ namespace JobBoard.Models.View
 
         public ApplicationStatusEnum? Status { get; set; }
         public IFormFile CV { get; set; }
+        public IFormFile MotivationLetter { get; set; }
     }
 }

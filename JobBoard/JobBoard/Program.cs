@@ -3,6 +3,7 @@ using JobBoard.Repositories;
 using JobBoard.Repositories.Interfaces;
 using JobBoard.Services;
 using JobBoard.Services.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +36,7 @@ builder.Services.AddScoped<IJobPostRepository, JobPostRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 
 var app = builder.Build();
 
@@ -59,6 +61,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-System.IO.Directory.CreateDirectory("Uploads/Resumes");
-System.IO.Directory.CreateDirectory("Uploads/MotivationLetters");
+System.IO.Directory.CreateDirectory("./wwwroot/Uploads/Resumes");
+System.IO.Directory.CreateDirectory("./wwwroot/Uploads/MotivationLetters");
 app.Run();

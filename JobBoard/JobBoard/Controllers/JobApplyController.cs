@@ -10,15 +10,15 @@ namespace JobBoard.Controllers
 {
     public class JobApplyController : Controller
     {
-        private readonly IHostEnvironment env;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IJobPostRepository? _jobPostRepository;
         private readonly IJobApplicationRepository? _jobApplicationRepository;
 
-        public JobApplyController(IHostEnvironment env, IJobPostRepository? jobPostRepository, IJobApplicationRepository? jobApplicationRepository)
+        public JobApplyController(IJobPostRepository? jobPostRepository, IJobApplicationRepository? jobApplicationRepository, IWebHostEnvironment webHostEnvironment)
         {
-            this.env = env;
             _jobPostRepository = jobPostRepository;
             _jobApplicationRepository = jobApplicationRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult ApplyToJob(int? id)
@@ -57,16 +57,19 @@ namespace JobBoard.Controllers
                 return View("LogIn");
             }
 
-            string filenameMotivation = "";
-
-            if (view.CV != null)
+            if (view.CV != null && view.MotivationLetter != null)
             {
-                string root = Path.Combine(env.ContentRootPath, "Uploads");
-                string path = Path.Combine(root, "Resumes");
-                var filenameCV = Globals.UserId.ToString() +"_"+ view.JobId.ToString() + ".pdf";
+                string root = Path.Combine(_webHostEnvironment.WebRootPath, "Uploads");
+                string pathCV = Path.Combine(root, "Resumes");
+                string pathML = Path.Combine(root, "MotivationLetters");
 
-                using FileStream stream = new FileStream(Path.Combine(path, filenameCV), FileMode.Create);
-                view.CV.CopyTo(stream);
+                var filenameCV = Globals.UserId.ToString() +"_"+ view.JobId.ToString() + ".pdf";
+                var filenameMotivation = Globals.UserId.ToString() +"_"+ view.JobId.ToString() + ".pdf";
+
+                using FileStream streamCV = new FileStream(Path.Combine(pathCV, filenameCV), FileMode.Create);
+                using FileStream streamML = new FileStream(Path.Combine(pathML, filenameMotivation), FileMode.Create);
+                view.CV.CopyTo(streamCV);
+                view.MotivationLetter.CopyTo(streamML);
 
                 // TODO: if(view.Motivation){}
 
@@ -74,8 +77,8 @@ namespace JobBoard.Controllers
                 {
                     JobId = view.JobId,
                     ApplicantId = Globals.UserId,
-                    UrlResume = Path.Combine(path, filenameCV),
-                    UrlMotivationLetter = ""
+                    UrlResume = Path.Combine(pathCV, filenameCV),
+                    UrlMotivationLetter = Path.Combine(pathML, filenameMotivation)
             };
 
                 _jobApplicationRepository.AddJobApplication(jobApp);
