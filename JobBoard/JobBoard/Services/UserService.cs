@@ -22,9 +22,9 @@ namespace JobBoard.Services
             return user;
         }
 
-        public UserProfileDataModel GetUserProfile(UserProfileDataModel profile)
+        public UserProfileDataModel GetUserProfile(int userId)
         {
-            var user = _userRepository.GetUserProfile(profile);
+            var user = _userRepository.GetUserProfile(userId);
 
             return user;
         }
@@ -37,6 +37,11 @@ namespace JobBoard.Services
         public void AddUserProfile(UserProfileDataModel profile)
         {
             _userRepository.AddUserProfile(profile);
+        }
+
+        public void EditUserProfile(UserProfileDataModel userProfile)
+        {
+            _userRepository.EditUserProfile(userProfile);
         }
 
         public void DeleteUser(int id)

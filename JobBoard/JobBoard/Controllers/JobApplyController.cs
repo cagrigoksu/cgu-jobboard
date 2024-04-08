@@ -60,8 +60,8 @@ namespace JobBoard.Controllers
             if (view.CV != null && view.MotivationLetter != null)
             {
                 string root = Path.Combine(_webHostEnvironment.WebRootPath, "Uploads");
-                string pathCV = Path.Combine(root, "Resumes");
-                string pathML = Path.Combine(root, "MotivationLetters");
+                string pathCV = Path.Combine(root, "Resumes/Application");
+                string pathML = Path.Combine(root, "MotivationLetters/Application");
 
                 var filenameCV = Globals.UserId.ToString() +"_"+ view.JobId.ToString() + ".pdf";
                 var filenameMotivation = Globals.UserId.ToString() +"_"+ view.JobId.ToString() + ".pdf";

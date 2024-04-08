@@ -4,17 +4,30 @@
 @{
 }
 <h1> Log On </h1>
+<br />
 @* <form method="post" asp-controller="Home" asp-action="LogOn"> *@
     @using (Html.BeginForm("LogOn", "User", FormMethod.Post))
     {
-    <input class="form-control" style="max-width:20em;" placeholder="e-mail" autocomplete="off" type="email" name="email" required>
-    <br>
-    <br>
-    <input class="form-control" style="max-width:20em;" placeholder="password" autocomplete="off" type="password" name="pwd" required>
-    <br>
-    <br>
-    <input class="form-control" style="max-width:20em;" placeholder="confirm password" autocomplete="off" type="password" name="pwdConf" required>
-    <br>
+        <div class="form-floating mb-3">
+            <input class="form-control" id="email" style="max-width:20em;" placeholder="e-mail" autocomplete="off" type="email" name="email" required>
+            <label for="email">Email</label>
+        </div>
+        <br>
+        <div class="form-floating mb-3">
+            <input class="form-control" id="pwd" style="max-width:20em;" placeholder="password" autocomplete="off" type="password" name="pwd" required>
+            <label for="pwd">Password</label>
+        </div>
+        <br>
+        <div class="form-floating mb-3">
+        <input class="form-control" id="pwdConf" style="max-width:20em;" placeholder="password" autocomplete="off" type="password" name="pwd" required>
+        <label for="pwdConf">Password Confirmation</label>
+        </div>
+    @* <br> *@
+    @* <input class="form-control" style="max-width:20em;" placeholder="password" autocomplete="off" type="password" name="pwd" required> *@
+    @* <br> *@
+    @* <br> *@
+    @* <input class="form-control" style="max-width:20em;" placeholder="confirm password" autocomplete="off" type="password" name="pwdConf" required> *@
+    @* <br> *@
     <br>
     <input class="form-check-input" type="checkbox" id="hiring" name="hiring" />
     <label for="hiring">I am HR at a company.</label><br><br><br>

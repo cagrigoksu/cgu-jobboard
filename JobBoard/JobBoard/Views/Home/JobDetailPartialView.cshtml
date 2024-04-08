@@ -29,25 +29,33 @@
 
     <br>
     @{
-        if (Model.isApplied)
+        if (!Model.CompanyUser)
         {
-            <p>You have already applied to this job. Status: </p>
-            <select class="form-control" asp-for="Status" disabled>
-                @{
-                    foreach (var enumItem in Enum.GetValues(typeof(ApplicationStatusEnum)))
-                    {
-                        <option value="@((int)enumItem)" selected="@((int)Model.Status == (int)enumItem)"> @(enumItem) </option>
+            if (Model.isApplied)
+            {
+                <p>You have already applied to this job. Status: </p>
+                <select class="form-control" asp-for="Status" disabled>
+                    @{
+                        foreach (var enumItem in Enum.GetValues(typeof(ApplicationStatusEnum)))
+                        {
+                            <option value="@((int)enumItem)" selected="@((int)Model.Status == (int)enumItem)"> @(enumItem) </option>
+                        }
                     }
-                }
-            </select>
-            <br>
-            <input class="btn btn-danger" type="button" value="withdraw application" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("WithdrawJobApplication", "JobApply", new {jobId = Model.JobId })+"'")" />
+                </select>
+                <br>
+                <input class="btn btn-danger" type="button" value="withdraw application" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("WithdrawJobApplication", "JobApply", new {jobId = Model.JobId })+"'")" />
 
+            }
+            else
+            {
+                <input class="btn btn-primary" type="button" value="apply" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("ApplyToJob", "JobApply", new {id = Model.JobId })+"'")" />
+            }
         }
         else
         {
-            <input class="btn btn-primary" type="button" value="apply" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("ApplyToJob", "JobApply", new {id = Model.JobId })+"'")" />
+            <p style="color:red;">Job application is only allowed for job-seeker accounts.</p>
         }
+        
     }
    
 </div>

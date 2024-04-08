@@ -28,7 +28,7 @@
     </thead>
     <tbody>
     @foreach (var item in Model.jobs) {
-        <tr>
+            <tr onclick="@("window.location.href='" + @Url.Action("DetailJobPost", "Poster", new {id= item.Id, detail=true} ) + "'");">
             <td>
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
@@ -39,8 +39,8 @@
                 @Html.DisplayFor(modelItem => item.PostDate)
             </td>
             <td>
-                <a asp-action="DetailJobPost" asp-route-id="@item.Id" asp-route-detail="@true">Details</a> |
-                <a asp-action="EditJobPost" asp-route-id="@item.Id" asp-route-edit="@true">Edit</a> | 
+                @* <a asp-action="DetailJobPost" asp-route-id="@item.Id" asp-route-detail="@true">Details</a> | *@
+                @* <a asp-action="EditJobPost" asp-route-id="@item.Id" asp-route-edit="@true">Edit</a> |  *@
                 <a asp-action="JobApplicants" asp-route-jobId="@item.Id">Applications</a>
             </td>
         </tr>

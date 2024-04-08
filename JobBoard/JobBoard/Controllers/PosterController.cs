@@ -52,8 +52,6 @@ namespace JobBoard.Controllers
         {
             _jobPostRepository.AddJobPost(post);
 
-            
-
             var jobPosts = _jobPostRepository.GetUserBasedJobPosts(Globals.UserId);
 
             return View("Dashboard",new JobPostViewModel() { jobs = jobPosts });
@@ -151,13 +149,14 @@ namespace JobBoard.Controllers
             }
 
             var applicant_list = _jobApplicationService.GetJobApplicantsList(jobId);
-            return View(new JobApplicantsViewModel(){Applicants = applicant_list, JobId = jobId});
+            var job = _jobPostRepository.GetJobPost(jobId);
+            return View(new JobApplicantsViewModel(){Applicants = applicant_list, JobId = jobId, JobTitle = job.Title});
         }
 
         public IActionResult DownloadResumePdf(int jobId, int applicantId)
         {
             string webRootPath = _webHostEnvironment.WebRootPath;
-            string outputFilePath = Path.Combine(webRootPath, "Uploads/Resumes/", applicantId.ToString()+"_"+jobId.ToString()+".pdf");
+            string outputFilePath = Path.Combine(webRootPath, "Uploads/Resumes/Application/", applicantId.ToString()+"_"+jobId.ToString()+".pdf");
 
             if (!System.IO.File.Exists(outputFilePath))
             {
@@ -177,7 +176,7 @@ namespace JobBoard.Controllers
         public IActionResult DownloadMotivationLetterPdf(int jobId, int applicantId)
         {
             string webRootPath = _webHostEnvironment.WebRootPath;
-            string outputFilePath = Path.Combine(webRootPath, "Uploads/MotivationLetters/", applicantId.ToString()+"_"+jobId.ToString()+".pdf");
+            string outputFilePath = Path.Combine(webRootPath, "Uploads/MotivationLetters/Application/", applicantId.ToString()+"_"+jobId.ToString()+".pdf");
 
             if (!System.IO.File.Exists(outputFilePath))
             {
