@@ -31,7 +31,7 @@ namespace JobBoard.Controllers
             return View(new IndexViewModel() { UserId = Globals.UserId, CompanyUser = Globals.CompanyUser, JobPosts = jobPosts });
         }
 
-        public IActionResult JobPostDetail(int jobId)
+        public IActionResult JobPostDetail(int jobId, bool companyUser)
         {
             var job = _jobPostRepository.GetJobPost(jobId);
             var isApplied = _jobApplicationRepository.GetUserJobApplication(Globals.UserId, jobId);
@@ -43,7 +43,8 @@ namespace JobBoard.Controllers
                 LevelId = job.LevelId,
                 Country = job.Country,
                 City = job.City,
-                Description = job.Description
+                Description = job.Description,
+                CompanyUser = companyUser
             };
 
             if (isApplied != null)
