@@ -156,7 +156,7 @@ namespace JobBoard.Controllers
         public IActionResult DownloadResumePdf(int jobId, int applicantId)
         {
             string webRootPath = _webHostEnvironment.WebRootPath;
-            string outputFilePath = Path.Combine(webRootPath, "Uploads/Resumes/", applicantId.ToString()+"_"+jobId.ToString()+".pdf");
+            string outputFilePath = Path.Combine(webRootPath, "Uploads/Resumes/Application/", applicantId.ToString()+"_"+jobId.ToString()+".pdf");
 
             if (!System.IO.File.Exists(outputFilePath))
             {
@@ -176,7 +176,7 @@ namespace JobBoard.Controllers
         public IActionResult DownloadMotivationLetterPdf(int jobId, int applicantId)
         {
             string webRootPath = _webHostEnvironment.WebRootPath;
-            string outputFilePath = Path.Combine(webRootPath, "Uploads/MotivationLetters/", applicantId.ToString()+"_"+jobId.ToString()+".pdf");
+            string outputFilePath = Path.Combine(webRootPath, "Uploads/MotivationLetters/Application/", applicantId.ToString()+"_"+jobId.ToString()+".pdf");
 
             if (!System.IO.File.Exists(outputFilePath))
             {

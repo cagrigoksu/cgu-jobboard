@@ -13,18 +13,32 @@
     <label for="surnameInput">Surname</label>
     <br />
     <input class="form-control" style="max-width:20em;" type="text" id="surnameInput" asp-for="Surname" />
-    <br/>
-    <input class="form-control" style="max-width:20em;" type="text" id="emailInput" asp-for="Email" readonly />
-    <br/>    
+    <br />
+    <label for="emailInput">Email</label>
+    <br />
+    <input class="form-control" style="max-width:20em;" type="text" id="emailInput" asp-for="Email" />
+    <br />
+    <label for="phoneInput">Phone Number</label>
+    <br />
     <input class="form-control" style="max-width:20em;" type="text" id="phoneInput" asp-for="PhoneNumber" />
     <br/>
-    <label for="resumeInput">Upload your resume</label>
-    <br />
-    <input class="form-control" style="max-width:20em;" type="file" id="resumeInput" asp-for="CV"/>
-    <br/>
-    <label for="motivationInput">Upload your motivation letter</label>
-    <br />
-    <input class="form-control" style="max-width:20em;" type="file" id="motivationInput" asp-for="MotivationLetter"/>
-    <br/><br/>
+    @if (!Model.CompanyUser)
+    {
+        <label for="resumeInput">Upload your resume</label>
+        <br />
+        <input class="form-control" style="max-width:20em;" type="file" id="resumeInput" asp-for="CV"/>
+        <br/>
+        <label for="motivationInput">Upload your motivation letter</label>
+        <br />
+        <input class="form-control" style="max-width:20em;" type="file" id="motivationInput" asp-for="MotivationLetter"/>
+        <br/>
+    }
     <input type="submit" value="save" class="btn btn-dark"/>
+    <br/><br/>
+    @if (@ViewBag.Message != null)
+    {
+        <div class="alert alert-success">
+            <strong>Success!</strong> @ViewBag.Message
+        </div>
+    }
 </form>

@@ -50,7 +50,7 @@
                                             <a class="dropbtn nav-link text-dark">@HttpContextAccessor?.HttpContext.Session.GetString("Email")</a>
                                             <div class="dropdown-content">
                                                 <a asp-controller="Poster" asp-action="Dashboard">Dashboard</a>
-                                                <a href="#">Profile</a>
+                                                <a asp-controller="User" asp-action="UserProfile">Profile</a>
                                                 <a asp-controller="User" asp-action="LogOut">Log Out</a>
                                             </div>
                                         </div>

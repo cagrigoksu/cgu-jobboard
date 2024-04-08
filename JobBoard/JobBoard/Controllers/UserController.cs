@@ -9,6 +9,8 @@ using JobBoard.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace JobBoard.Controllers
 {
@@ -112,10 +114,10 @@ namespace JobBoard.Controllers
                 result.Name = profile.Name;
                 result.Surname = profile.Surname;
                 result.PhoneNumber = profile.PhoneNumber;
+                result.Email = profile.Email;
             };
 
-            result.Email = HttpContext.Session.GetString("Email");
-
+            result.CompanyUser = Convert.ToBoolean(HttpContext.Session.GetInt32("CompanyUser"));
             return View(result);
         }
 
@@ -166,6 +168,7 @@ namespace JobBoard.Controllers
                 profile.Name = model.Name;
                 profile.Surname = model.Surname;
                 profile.PhoneNumber = model.PhoneNumber;
+                profile.Email = model.Email;
 
                 if (_UrlResume != "")
                     profile.UrlResume = _UrlResume;
@@ -181,6 +184,7 @@ namespace JobBoard.Controllers
                 profile.Name = model.Name;
                 profile.Surname = model.Surname;
                 profile.PhoneNumber = model.PhoneNumber;
+                profile.Email = model.Email;
 
                 if (_UrlResume != "")
                     profile.UrlResume = _UrlResume;
@@ -188,6 +192,10 @@ namespace JobBoard.Controllers
                     profile.UrlMotivationLetter = _UrlMotivationLetter;
                 _userService.AddUserProfile(profile);
             }
+
+            ModelState.Clear();
+            ViewBag.Message = "Successfully saved.";
+            model.CompanyUser = Convert.ToBoolean(HttpContext.Session.GetInt32("CompanyUser"));
 
             return View(model);
         }

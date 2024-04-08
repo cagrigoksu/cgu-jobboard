@@ -8,5 +8,6 @@
         public string PhoneNumber { get; set; }
         public IFormFile CV { get; set; }
         public IFormFile MotivationLetter { get; set; }
+        public bool CompanyUser { get; set; }
     }
 }

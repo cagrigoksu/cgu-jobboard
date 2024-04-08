@@ -48,6 +48,7 @@ namespace JobBoard.Repositories
             data.Name = userProfile.Name;
             data.Surname = userProfile.Surname;
             data.PhoneNumber = userProfile.PhoneNumber;
+            data.Email = userProfile.Email;
             data.UrlResume = userProfile.UrlResume;
             data.UrlMotivationLetter = userProfile.UrlMotivationLetter;
             data.LastEditDate = DateTime.Now;
