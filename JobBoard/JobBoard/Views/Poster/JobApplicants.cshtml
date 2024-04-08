@@ -1,0 +1,58 @@
+﻿@model JobBoard.Models.View.JobApplicantsViewModel
+
+<h1>Applicants</h1>
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Application Date</th>
+        <th>Resume</th>
+        <th>Motivation Letter</th>
+    </tr>
+
+    </thead>
+    <tbody>
+    @foreach (var applicant in Model.Applicants)
+    {
+        <tr>
+            <td hidden>@Html.DisplayFor(m => applicant.ApplicantId)</td>
+            <td>@Html.DisplayFor(m => applicant.Name)</td>
+            <td>@Html.DisplayFor(m => applicant.Surname)</td>
+            <td>@{
+                    var date = applicant.ApplicationDate.ToShortDateString();
+                }
+
+                @Html.DisplayFor(m => date)
+            </td>
+            <td>
+                @{
+                    var resumeURL = applicant.ResumeURL;
+                }
+                <a asp-action="DownloadResumePdf" asp-route-jobId="@Model.JobId" asp-route-applicantId="@applicant.ApplicantId">
+                        <img src="~/icons/file.png" style="cursor:pointer; max-width:1em;" />
+                </a>
+                
+            </td>
+            <td>
+                @{
+                    var motivationURL = applicant.MotivationLetterURL;
+                }
+                <a asp-action="DownloadMotivationLetterPdf" asp-route-jobId="@Model.JobId" asp-route-applicantId="@applicant.ApplicantId">
+                    <img src="~/icons/file.png" style="cursor:pointer; max-width:1em;" />
+                </a>
+            </td>
+
+        </tr>
+    }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+
+    openResumeOnNewTab = (url) => {
+        window.open(url, '_blank');
+    }
+
+</script>

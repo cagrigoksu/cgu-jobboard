@@ -36,5 +36,11 @@ namespace JobBoard.Services
         {
             _jobApplicationRepository.WithdrawJobApplication(jobId);
         }
+
+        public IQueryable<JobApplicantsListModel> GetJobApplicantsList(int jobId)
+        {
+            var applicant_list = _jobApplicationRepository.GetJobApplicantsList(jobId);
+            return applicant_list;
+        }
     }
 }

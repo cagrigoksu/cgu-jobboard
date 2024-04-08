@@ -58,7 +58,7 @@ namespace JobBoard.Repositories
 
         public void WithdrawJobApplication(int jobId)
         {
-            var dbPost = _db.JobApplications.First(x => x.Id == jobId && x.IsDeleted == false);
+            var dbPost = _db.JobApplications.FirstOrDefault(x => x.JobId == jobId && x.IsDeleted == false);
 
             dbPost.DeleteDate = DateTime.Now;
             dbPost.IsDeleted = true;
@@ -66,6 +66,26 @@ namespace JobBoard.Repositories
 
             _db.Update(dbPost);
             _db.SaveChanges();
+        }
+
+        public IQueryable<JobApplicantsListModel> GetJobApplicantsList(int jobId)
+        {
+            var applicants = from job in _db.JobPosts
+                join app in _db.JobApplications on job.Id equals app.JobId
+                join user in _db.UserProfiles on app.ApplicantId equals user.UserId
+                where job.Id == jobId && job.IsDeleted == false && app.IsDeleted == false
+                select new JobApplicantsListModel()
+                {
+                    ApplicantId = app.ApplicantId,
+                    Name = user.Name ,
+                    Surname = user.Surname ,
+                    ApplicationDate = app.ApplicationDate,
+                    ResumeURL = app.UrlResume,
+                    MotivationLetterURL = app.UrlMotivationLetter,
+                    Status = app.Status
+                };
+
+            return applicants;
         }
     }
 }
