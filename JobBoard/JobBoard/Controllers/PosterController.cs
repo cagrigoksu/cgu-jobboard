@@ -151,7 +151,8 @@ namespace JobBoard.Controllers
             }
 
             var applicant_list = _jobApplicationService.GetJobApplicantsList(jobId);
-            return View(new JobApplicantsViewModel(){Applicants = applicant_list, JobId = jobId});
+            var job = _jobPostRepository.GetJobPost(jobId);
+            return View(new JobApplicantsViewModel(){Applicants = applicant_list, JobId = jobId, JobTitle = job.Title});
         }
 
         public IActionResult DownloadResumePdf(int jobId, int applicantId)

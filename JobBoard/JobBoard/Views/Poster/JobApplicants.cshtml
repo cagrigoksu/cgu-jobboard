@@ -1,23 +1,34 @@
-﻿@model JobBoard.Models.View.JobApplicantsViewModel
+﻿@using JobBoard.Enums
+@model JobBoard.Models.View.JobApplicantsViewModel
 
-<h1>Applicants</h1>
+<h1>Applicant list for @Model.JobTitle (ID: @Model.JobId)</h1>
 
 <table class="table table-hover">
     <thead>
     <tr>
+        <th>Applicant ID</th>
         <th>Name</th>
         <th>Surname</th>
         <th>Application Date</th>
         <th>Resume</th>
         <th>Motivation Letter</th>
+        <th>Status</th>
     </tr>
 
     </thead>
     <tbody>
     @foreach (var applicant in Model.Applicants)
     {
-        <tr>
-            <td hidden>@Html.DisplayFor(m => applicant.ApplicantId)</td>
+        
+        var trStyle = "";
+        if(applicant.Status == ApplicationStatusEnum.NotSelected)
+        {
+            trStyle = "background-color: #f58c8c;";
+        }
+        
+
+        <tr style="@trStyle">
+            <td>@Html.DisplayFor(m => applicant.ApplicantId)</td>
             <td>@Html.DisplayFor(m => applicant.Name)</td>
             <td>@Html.DisplayFor(m => applicant.Surname)</td>
             <td>@{
@@ -43,6 +54,16 @@
                     <img src="~/icons/file.png" style="cursor:pointer; max-width:1em;" />
                 </a>
             </td>
+                <td>
+                    <select class="form-control" disabled>
+                        @{
+                            foreach (var enumItem in Enum.GetValues(typeof(ApplicationStatusEnum)))
+                            {
+                                <option value="@((int)enumItem)" selected="@((int)applicant.Status == (int)enumItem)"> @(enumItem) </option>
+                            }
+                        }
+                    </select>
+                </td>
 
         </tr>
     }
