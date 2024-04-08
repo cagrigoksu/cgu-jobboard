@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using JobBoard.Models.Data;
 using JobBoard.Models.View;
 using JobBoard.Models.Classes;
 using JobBoard.Repositories.Interfaces;
 using JobBoard.Services;
 using JobBoard.Services.Interfaces;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JobBoard.Controllers
 {
@@ -12,11 +16,13 @@ namespace JobBoard.Controllers
     {
         private readonly IJobPostRepository? _jobPostRepository;
         private readonly IUserService? _userService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public UserController(IJobPostRepository jobPostRepository, IUserService? userService)
+        public UserController(IJobPostRepository jobPostRepository, IUserService? userService, IWebHostEnvironment webHostEnvironment)
         {
             _jobPostRepository = jobPostRepository;
             _userService = userService;
+            _webHostEnvironment = webHostEnvironment;
         }
         
         public IActionResult LogIn()
@@ -99,13 +105,16 @@ namespace JobBoard.Controllers
 
             var result = new UserProfileViewModel();
 
-            var profile = _userService.GetUserProfile(new UserProfileDataModel(){Id = Globals.UserId });
+            var profile = _userService.GetUserProfile(Globals.UserId);
 
             if (profile != null)
             {
                 result.Name = profile.Name;
                 result.Surname = profile.Surname;
-            }
+                result.PhoneNumber = profile.PhoneNumber;
+            };
+
+            result.Email = HttpContext.Session.GetString("Email");
 
             return View(result);
         }
@@ -118,12 +127,67 @@ namespace JobBoard.Controllers
                 return View("LogIn");
             }
 
-            var profile = new UserProfileDataModel();
-            profile.UserId = Globals.UserId;
-            profile.Name  = model.Name;
-            profile.Surname = model.Surname;
+            var profile = _userService.GetUserProfile(Globals.UserId);
+            var _UrlResume = "";
+            var _UrlMotivationLetter = "";
+            
+            // Copy CV and ML files to server
+            if (model.CV != null)
+            {
+                string root = Path.Combine(_webHostEnvironment.WebRootPath, "Uploads");
+                string pathCV = Path.Combine(root, "Resumes\\Profile");
 
-            _userService.AddUserProfile(profile);
+                var filenameCV = Globals.UserId.ToString() + ".pdf";
+
+                using FileStream streamCV = new FileStream(Path.Combine(pathCV, filenameCV), FileMode.Create);
+
+                model.CV.CopyTo(streamCV);
+
+                _UrlResume = Path.Combine(pathCV, filenameCV);
+            }
+            if (model.MotivationLetter != null)
+            {
+                string root = Path.Combine(_webHostEnvironment.WebRootPath, "Uploads");
+                string pathML = Path.Combine(root, "MotivationLetters\\Profile");
+
+                var filenameMotivation = Globals.UserId.ToString() + ".pdf";
+
+                using FileStream streamML = new FileStream(Path.Combine(pathML, filenameMotivation), FileMode.Create);
+
+                model.MotivationLetter.CopyTo(streamML);
+
+                _UrlMotivationLetter = Path.Combine(pathML, filenameMotivation);
+            }
+
+            if (profile != null)
+            {
+                // Update existing user profile
+
+                profile.Name = model.Name;
+                profile.Surname = model.Surname;
+                profile.PhoneNumber = model.PhoneNumber;
+
+                if (_UrlResume != "")
+                    profile.UrlResume = _UrlResume;
+                if (_UrlMotivationLetter != "")
+                    profile.UrlMotivationLetter = _UrlMotivationLetter;
+                _userService.EditUserProfile(profile);
+            }
+            else
+            {
+                // Add new user profile
+                profile = new UserProfileDataModel();
+                profile.UserId = Globals.UserId;
+                profile.Name = model.Name;
+                profile.Surname = model.Surname;
+                profile.PhoneNumber = model.PhoneNumber;
+
+                if (_UrlResume != "")
+                    profile.UrlResume = _UrlResume;
+                if (_UrlMotivationLetter != "")
+                    profile.UrlMotivationLetter = _UrlMotivationLetter;
+                _userService.AddUserProfile(profile);
+            }
 
             return View(model);
         }
@@ -136,140 +200,6 @@ namespace JobBoard.Controllers
 
             return View("LogIn");
         }
-
-        // // GET: User
-        // public async Task<IActionResult> Index()
-        // {
-        //     return View(await _context.Users.ToListAsync());
-        // }
-
-        // // GET: User/Details/5
-        // public async Task<IActionResult> Details(int? id)
-        // {
-        //     if (id == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     var userDataModel = await _context.Users
-        //         .FirstOrDefaultAsync(m => m.Id == id);
-        //     if (userDataModel == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     return View(userDataModel);
-        // }
-
-        // // GET: User/Create
-        // public IActionResult Create()
-        // {
-        //     return View();
-        // }
-
-        // // POST: User/Create
-        // // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> Create([Bind("Id,Email,Password,CompanyUser,LogOnDate,Deleted,DeleteDate")] UserDataModel userDataModel)
-        // {
-        //     if (ModelState.IsValid)
-        //     {
-        //         _context.Add(userDataModel);
-        //         await _context.SaveChangesAsync();
-        //         return RedirectToAction(nameof(Index));
-        //     }
-        //     return View(userDataModel);
-        // }
-
-        // // GET: User/Edit/5
-        // public async Task<IActionResult> Edit(int? id)
-        // {
-        //     if (id == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     var userDataModel = await _context.Users.FindAsync(id);
-        //     if (userDataModel == null)
-        //     {
-        //         return NotFound();
-        //     }
-        //     return View(userDataModel);
-        // }
-
-        // // POST: User/Edit/5
-        // // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> Edit(int id, [Bind("Id,Email,Password,CompanyUser,LogOnDate,Deleted,DeleteDate")] UserDataModel userDataModel)
-        // {
-        //     if (id != userDataModel.Id)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     if (ModelState.IsValid)
-        //     {
-        //         try
-        //         {
-        //             _context.Update(userDataModel);
-        //             await _context.SaveChangesAsync();
-        //         }
-        //         catch (DbUpdateConcurrencyException)
-        //         {
-        //             if (!UserDataModelExists(userDataModel.Id))
-        //             {
-        //                 return NotFound();
-        //             }
-        //             else
-        //             {
-        //                 throw;
-        //             }
-        //         }
-        //         return RedirectToAction(nameof(Index));
-        //     }
-        //     return View(userDataModel);
-        // }
-
-        // // GET: User/Delete/5
-        // public async Task<IActionResult> Delete(int? id)
-        // {
-        //     if (id == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     var userDataModel = await _context.Users
-        //         .FirstOrDefaultAsync(m => m.Id == id);
-        //     if (userDataModel == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     return View(userDataModel);
-        // }
-
-        // // POST: User/Delete/5
-        // [HttpPost, ActionName("Delete")]
-        // [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> DeleteConfirmed(int id)
-        // {
-        //     var userDataModel = await _context.Users.FindAsync(id);
-        //     if (userDataModel != null)
-        //     {
-        //         _context.Users.Remove(userDataModel);
-        //     }
-
-        //     await _context.SaveChangesAsync();
-        //     return RedirectToAction(nameof(Index));
-        // }
-
-        // private bool UserDataModelExists(int id)
-        // {
-        //     return _context.Users.Any(e => e.Id == id);
-        // }
+       
     }
 }

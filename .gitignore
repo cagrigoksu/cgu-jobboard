@@ -3,8 +3,12 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
-JobBoard/JobBoard/wwwroot/Uploads/Resumes/
-JobBoard/JobBoard/wwwroot/Uploads/MotivationLetters/
+JobBoard/JobBoard/wwwroot/Uploads/Resumes/Application/
+JobBoard/JobBoard/wwwroot/Uploads/Resumes/Profile/
+
+JobBoard/JobBoard/wwwroot/Uploads/MotivationLetters/Application/
+JobBoard/JobBoard/wwwroot/Uploads/MotivationLetters/Profile/
+
 #JobBoard/JobBoard/appsettings.json
 
 JobBoard_React/

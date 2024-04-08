@@ -20,9 +20,9 @@ namespace JobBoard.Repositories
             return user;
         }
 
-        public UserProfileDataModel GetUserProfile(UserProfileDataModel userProfile)
+        public UserProfileDataModel GetUserProfile(int userId)
         {
-            var profile = _db.UserProfiles.FirstOrDefault(x => x.UserId == userProfile.Id && x.IsDeleted == false);
+            var profile = _db.UserProfiles.FirstOrDefault(x => x.UserId == userId && x.IsDeleted == false);
 
             return profile;
         }
@@ -38,6 +38,21 @@ namespace JobBoard.Repositories
         {
             userProfile.LastEditDate = DateTime.Now;
             _db.Add(userProfile);
+            _db.SaveChanges();
+        }
+
+        public void EditUserProfile(UserProfileDataModel userProfile)
+        {
+            var data = _db.UserProfiles.First(x => x.UserId == Globals.UserId);
+
+            data.Name = userProfile.Name;
+            data.Surname = userProfile.Surname;
+            data.PhoneNumber = userProfile.PhoneNumber;
+            data.UrlResume = userProfile.UrlResume;
+            data.UrlMotivationLetter = userProfile.UrlMotivationLetter;
+            data.LastEditDate = DateTime.Now;
+
+            _db.Update(data);
             _db.SaveChanges();
         }
 

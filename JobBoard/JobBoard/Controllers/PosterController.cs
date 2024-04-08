@@ -52,8 +52,6 @@ namespace JobBoard.Controllers
         {
             _jobPostRepository.AddJobPost(post);
 
-            
-
             var jobPosts = _jobPostRepository.GetUserBasedJobPosts(Globals.UserId);
 
             return View("Dashboard",new JobPostViewModel() { jobs = jobPosts });
