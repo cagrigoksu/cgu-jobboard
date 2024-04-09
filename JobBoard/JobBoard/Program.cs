@@ -39,6 +39,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 builder.Services.AddScoped<IJobPosterService, JobPosterService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ISecurityService, SecurityService>();
 
 var app = builder.Build();
 

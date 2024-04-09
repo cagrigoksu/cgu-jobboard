@@ -19,12 +19,14 @@ namespace JobBoard.Controllers
         private readonly IJobPosterRepository? _jobPosterRepository;
         private readonly IUserService? _userService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ISecurityService _securityService;
 
-        public UserController(IJobPosterRepository jobPosterRepository, IUserService? userService, IWebHostEnvironment webHostEnvironment)
+        public UserController(IJobPosterRepository jobPosterRepository, IUserService? userService, IWebHostEnvironment webHostEnvironment, ISecurityService securityService)
         {
             _jobPosterRepository = jobPosterRepository;
             _userService = userService;
             _webHostEnvironment = webHostEnvironment;
+            _securityService = securityService;
         }
         
         public IActionResult LogIn()
@@ -36,23 +38,27 @@ namespace JobBoard.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult LogIn(string email, string pwd)
         {
-            var user = _userService.GetUser(email, pwd);
+            var user = _userService.GetUser(email);
 
             if (user != null)
             {
-                Globals.UserId = user.Id;
-                Globals.CompanyUser = user.CompanyUser;
-                HttpContext.Session.SetInt32("Id", user.Id);
-                HttpContext.Session.SetString("Email", user.Email);
-                HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
+                var hashedPwd = _securityService.Hasher(pwd, user.PasswordSalt, Globals.HashIter);
 
-                var jobPosts = _jobPosterRepository.GetAllJobPosts();
-                return View("Index", new IndexViewModel(){UserId = user.Id, CompanyUser = user.CompanyUser,JobPosts = jobPosts});
+                if (user.PasswordHash == hashedPwd)
+                {
+                    Globals.UserId = user.Id;
+                    Globals.CompanyUser = user.CompanyUser;
+                    HttpContext.Session.SetInt32("Id", user.Id);
+                    HttpContext.Session.SetString("Email", user.Email);
+                    HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
+
+                    var jobPosts = _jobPosterRepository.GetAllJobPosts();
+                    return View("Index", new IndexViewModel() { UserId = user.Id, CompanyUser = user.CompanyUser, JobPosts = jobPosts });
+                }
+               
             }
-            else
-            {
-                return NotFound();
-            }
+            // TODO: user not found and incorrect password message
+            return NotFound();
         }
 
         public IActionResult LogOn()
@@ -64,38 +70,52 @@ namespace JobBoard.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult LogOn(IFormCollection formCollection)
         {
-            if (formCollection["pwd"] == formCollection["pwdConf"])
+            // user log on
+
+            var isUserExist = _userService.IsUserExist(formCollection["email"]);
+
+            if (!isUserExist)
             {
-                var user = new UserDataModel()
+                var pwd = formCollection["pwd"];
+                var pwdConf = formCollection["pwdConf"];
+                if (pwd == pwdConf)
                 {
-                    Email = formCollection["email"],
-                    Password = formCollection["pwd"],
-                    CompanyUser = formCollection["hiring"] == "on",
-                };
+                    // generate salt and hash
+                    var userSalt = _securityService.GenerateSalt();
+                    var userHashedPwd = _securityService.Hasher(pwd, userSalt, Globals.HashIter);
 
-                _userService.AddUser(user);
+                    var user = new UserDataModel()
+                    {
+                        Email = formCollection["email"],
+                        CompanyUser = formCollection["hiring"] == "on",
+                        PasswordSalt = userSalt,
+                        PasswordHash = userHashedPwd
+                    };
 
-                var userResult = _userService.GetUser(user.Email, user.Password);
-                
-                if (userResult != null)
-                {
-                    Globals.UserId = user.Id;
-                    HttpContext.Session.SetInt32("Id", user.Id);
-                    HttpContext.Session.SetString("Email", user.Email);
-                    HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
+                    // save user
+                    _userService.AddUser(user);
 
-                    var jobPosts = _jobPosterRepository.GetAllJobPosts();
-                    return View("Index", new IndexViewModel() { JobPosts = jobPosts });
-                }
-                else
-                {
+                    var userResult = _userService.GetUser(user.Email);
+
+                    if (userResult != null)
+                    {
+                        Globals.UserId = user.Id;
+                        HttpContext.Session.SetInt32("Id", user.Id);
+                        HttpContext.Session.SetString("Email", user.Email);
+                        HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
+
+                        var jobPosts = _jobPosterRepository.GetAllJobPosts();
+                        return View("Index", new IndexViewModel() { JobPosts = jobPosts });
+                    }
+                    // TODO: user not found.
                     return NotFound();
                 }
-            }
-            else
-            {
+
                 return View("LogOn");
             }
+
+            // TODO: return user exist message.
+            return View("LogOn");
         }
 
         public IActionResult UserProfile()

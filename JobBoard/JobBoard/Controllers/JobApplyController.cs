@@ -71,8 +71,6 @@ namespace JobBoard.Controllers
                 view.CV.CopyTo(streamCV);
                 view.MotivationLetter.CopyTo(streamML);
 
-                // TODO: if(view.Motivation){}
-
                 var jobApp = new JobApplicationDataModel()
                 {
                     JobId = view.JobId,
