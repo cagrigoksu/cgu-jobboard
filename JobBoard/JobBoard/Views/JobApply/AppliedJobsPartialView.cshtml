@@ -17,7 +17,7 @@
         <br/><br/>
         <p>Filters: </p>
         <select class="form-control" style="max-width:10em;" id="statusSelect" onchange="appliedJobFilter('@Url.Action("AppliedJobsPartialView")')">
-            <option id="statusOption" selected="@(Model.FilterStatus == null)" > select one </option>
+            <option id="statusOption" selected="@(Model.FilterStatus == null)" > All </option>
             @foreach (var item in Enum.GetValues(typeof(ApplicationStatusEnum)))
             {
                 <option id="statusOption" selected="@(Model.FilterStatus != null && (int)Model.FilterStatus == (int)item)" value="@((int)item)"> @(item) </option>

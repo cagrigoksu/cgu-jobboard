@@ -1,5 +1,6 @@
 ﻿using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
+using JobBoard.Models.View;
 using JobBoard.Repositories.Interfaces;
 using JobBoard.Services.Interfaces;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
@@ -16,20 +17,21 @@ namespace JobBoard.Services
             _jobApplicationRepository = jobApplicationRepository;
         }
 
-
         public JobApplicationDataModel GetUserJobApplication(int userId, int jobId)
         {
-            throw new NotImplementedException();
+            var data = _jobApplicationRepository.GetUserJobApplication(userId, jobId);
+            return data;
         }
 
         public void AddJobApplication(JobApplicationDataModel jobApplication)
         {
-            throw new NotImplementedException();
+            _jobApplicationRepository.AddJobApplication(jobApplication);
         }
 
         public IQueryable<AppliedJobsListModel> GetUserBasedJobApplications(int userId)
         {
-            throw new NotImplementedException();
+            var data = _jobApplicationRepository.GetUserBasedJobApplications(userId);
+            return data;
         }
 
         public void WithdrawJobApplication(int jobId)
@@ -37,10 +39,9 @@ namespace JobBoard.Services
             _jobApplicationRepository.WithdrawJobApplication(jobId);
         }
 
-        public IQueryable<JobApplicantsListModel> GetJobApplicantsList(int jobId)
+        public void EditJobApplication(JobApplicationDataModel model)
         {
-            var applicant_list = _jobApplicationRepository.GetJobApplicantsList(jobId);
-            return applicant_list;
+            _jobApplicationRepository.EditJobApplication(model);
         }
     }
 }

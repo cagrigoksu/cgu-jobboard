@@ -1,5 +1,6 @@
 ﻿using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
+using JobBoard.Models.View;
 
 namespace JobBoard.Services.Interfaces
 {
@@ -9,8 +10,7 @@ namespace JobBoard.Services.Interfaces
         void AddJobApplication(JobApplicationDataModel jobApplication);
         IQueryable<AppliedJobsListModel> GetUserBasedJobApplications(int userId);
         void WithdrawJobApplication(int jobId);
-        IQueryable<JobApplicantsListModel> GetJobApplicantsList(int jobId);
 
-
+        void EditJobApplication(JobApplicationDataModel view);
     }
 }

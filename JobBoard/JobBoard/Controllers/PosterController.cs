@@ -6,6 +6,7 @@ using JobBoard.Models.Data;
 using JobBoard.Models.View;
 using JobBoard.Repositories.Interfaces;
 using System.Diagnostics.Metrics;
+using JobBoard.Enums;
 using JobBoard.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 
@@ -13,15 +14,22 @@ namespace JobBoard.Controllers
 {
     public class PosterController:Controller
     {
-        private readonly IJobPostRepository _jobPostRepository;
+        private readonly IJobPosterRepository _jobPosterRepository;
+        private readonly IJobPosterService _jobPosterService;
+
         private readonly IJobApplicationService _jobApplicationService;
+
+        private readonly IUserService _userService;
+
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public PosterController(IJobPostRepository jobPostRepository, IJobApplicationService jobApplicationService, IWebHostEnvironment webHostEnvironment)
+        public PosterController(IJobPosterRepository jobPosterRepository, IJobApplicationService jobApplicationService, IWebHostEnvironment webHostEnvironment, IJobPosterService jobPosterService, IUserService userService)
         {
-            _jobPostRepository = jobPostRepository;
+            _jobPosterRepository = jobPosterRepository;
             _jobApplicationService = jobApplicationService;
             _webHostEnvironment = webHostEnvironment;
+            _jobPosterService = jobPosterService;
+            _userService = userService;
         }
 
 
@@ -32,7 +40,7 @@ namespace JobBoard.Controllers
                  return View("LogIn");
              }
 
-             var jobPosts = _jobPostRepository.GetUserBasedJobPosts(Globals.UserId);
+             var jobPosts = _jobPosterRepository.GetUserBasedJobPosts(Globals.UserId);
 
              return View(new JobPostViewModel(){jobs = jobPosts});
         }
@@ -50,9 +58,9 @@ namespace JobBoard.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public IActionResult AddJobPost(JobPostDataModel post)
         {
-            _jobPostRepository.AddJobPost(post);
+            _jobPosterRepository.AddJobPost(post);
 
-            var jobPosts = _jobPostRepository.GetUserBasedJobPosts(Globals.UserId);
+            var jobPosts = _jobPosterRepository.GetUserBasedJobPosts(Globals.UserId);
 
             return View("Dashboard",new JobPostViewModel() { jobs = jobPosts });
         }
@@ -70,7 +78,7 @@ namespace JobBoard.Controllers
                 return NotFound();
             }
 
-            var job = _jobPostRepository.GetJobPost(id);
+            var job = _jobPosterRepository.GetJobPost(id);
 
             var result = new JobPostViewModel()
             {
@@ -92,7 +100,7 @@ namespace JobBoard.Controllers
                 return View("LogIn");
             }
 
-            var job = _jobPostRepository.GetJobPost(id);
+            var job = _jobPosterRepository.GetJobPost(id);
             var result = new JobPostViewModel()
                 {
                     Edit = edit,
@@ -109,7 +117,7 @@ namespace JobBoard.Controllers
         [HttpPost]
         public IActionResult EditJobPost(JobPostViewModel post)
         {
-            _jobPostRepository.UpdateJobPost(new JobPostDataModel()
+            _jobPosterRepository.UpdateJobPost(new JobPostDataModel()
             {
                 Id = post.Id,
                 Title = post.Title,
@@ -119,7 +127,7 @@ namespace JobBoard.Controllers
                 City = post.City,
               });
             
-            var jobPosts = _jobPostRepository.GetUserBasedJobPosts(Globals.UserId);
+            var jobPosts = _jobPosterRepository.GetUserBasedJobPosts(Globals.UserId);
 
             return View("Dashboard", new JobPostViewModel() { jobs = jobPosts });
         }
@@ -127,9 +135,9 @@ namespace JobBoard.Controllers
         [HttpPost]
         public IActionResult DeleteJobPost(int id)
         {
-            _jobPostRepository.DeleteJobPost(id);
+            _jobPosterRepository.DeleteJobPost(id);
 
-            var jobPosts = _jobPostRepository.GetUserBasedJobPosts(Globals.UserId);
+            var jobPosts = _jobPosterRepository.GetUserBasedJobPosts(Globals.UserId);
 
             return View("Dashboard", new JobPostViewModel(){jobs = jobPosts} );
 
@@ -140,17 +148,43 @@ namespace JobBoard.Controllers
             return PartialView("DeleteConfirmationPartialView", new JobPostViewModel(){Id = deleteId});
         }
 
-        [HttpGet]
+        [HttpGet]   // Get applicant list for a job post
         public IActionResult JobApplicants(int jobId)
         {
+
             if (new SessionUtils().EmptySession())
             {
                 return View("LogIn");
             }
 
-            var applicant_list = _jobApplicationService.GetJobApplicantsList(jobId);
-            var job = _jobPostRepository.GetJobPost(jobId);
-            return View(new JobApplicantsViewModel(){Applicants = applicant_list, JobId = jobId, JobTitle = job.Title});
+            var applicantList = _jobPosterService.GetJobApplicantsList(jobId);
+            var job = _jobPosterRepository.GetJobPost(jobId);
+            return View(new JobApplicantsViewModel(){Applicants = applicantList, JobId = jobId, JobTitle = job.Title});
+        }
+
+        [HttpGet]   // Get applicant detail for a job post
+        public IActionResult ApplicantDetail(int applicantId, int jobId)
+        {
+            var job = _jobPosterService.GetJobPost(jobId);
+            var application = _jobApplicationService.GetUserJobApplication(applicantId, jobId);
+            var applicantProfile = _userService.GetUserProfile(application.ApplicantId);
+
+
+            ApplicantDetailViewModel view = new ApplicantDetailViewModel();
+            
+            view.JobId = jobId;
+            view.ApplicantId = applicantId;
+            view.Name = applicantProfile.Name;
+            view.Surname = applicantProfile.Surname;
+            view.Email = applicantProfile.Email;
+            view.PhoneNumber = applicantProfile.PhoneNumber;
+            view.UrlResume = application.UrlResume;
+            view.UrlMotivationLetter = application.UrlMotivationLetter;
+            view.ApplicationStatus = application.Status;
+            view.JobTitle = job.Title;
+            view.ApplicationDate = Convert.ToDateTime(application.ApplicationDate.ToShortDateString());
+
+            return View(view);
         }
 
         public IActionResult DownloadResumePdf(int jobId, int applicantId)
@@ -191,6 +225,21 @@ namespace JobBoard.Controllers
 
             // Send the file to the client
             return File(System.IO.File.ReadAllBytes(outputFilePath), "application/pdf", fileInfo.Name);
+        }
+
+        [HttpPost]
+        public int ChangeApplicantStatus(ApplicantDetailViewModel view)
+        {
+            _jobApplicationService.EditJobApplication(new JobApplicationDataModel()
+            {
+                ApplicantId = view.ApplicantId,
+                JobId = view.JobId,
+                Status = (ApplicationStatusEnum)view.ApplicationStatusInt
+            });
+            
+            ModelState.Clear();
+            ViewBag.Message = "Successfully saved.";
+            return 200;
         }
 
     }

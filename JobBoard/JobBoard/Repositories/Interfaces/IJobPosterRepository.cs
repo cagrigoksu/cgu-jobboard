@@ -1,8 +1,9 @@
-﻿using JobBoard.Models.Data;
+﻿using JobBoard.Models.Classes;
+using JobBoard.Models.Data;
 
 namespace JobBoard.Repositories.Interfaces
 {
-    public interface IJobPostRepository
+    public interface IJobPosterRepository
     {
         IQueryable<JobPostDataModel> GetAllJobPosts();
         IQueryable<JobPostDataModel> GetUserBasedJobPosts(int userId);
@@ -10,5 +11,7 @@ namespace JobBoard.Repositories.Interfaces
         void AddJobPost(JobPostDataModel post);
         void UpdateJobPost(JobPostDataModel post);
         void DeleteJobPost(int id);
+        IQueryable<JobApplicantsListModel> GetJobApplicantsList(int jobId);
+
     }
 }

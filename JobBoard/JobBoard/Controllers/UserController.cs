@@ -16,13 +16,13 @@ namespace JobBoard.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IJobPostRepository? _jobPostRepository;
+        private readonly IJobPosterRepository? _jobPosterRepository;
         private readonly IUserService? _userService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public UserController(IJobPostRepository jobPostRepository, IUserService? userService, IWebHostEnvironment webHostEnvironment)
+        public UserController(IJobPosterRepository jobPosterRepository, IUserService? userService, IWebHostEnvironment webHostEnvironment)
         {
-            _jobPostRepository = jobPostRepository;
+            _jobPosterRepository = jobPosterRepository;
             _userService = userService;
             _webHostEnvironment = webHostEnvironment;
         }
@@ -46,7 +46,7 @@ namespace JobBoard.Controllers
                 HttpContext.Session.SetString("Email", user.Email);
                 HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
 
-                var jobPosts = _jobPostRepository.GetAllJobPosts();
+                var jobPosts = _jobPosterRepository.GetAllJobPosts();
                 return View("Index", new IndexViewModel(){UserId = user.Id, CompanyUser = user.CompanyUser,JobPosts = jobPosts});
             }
             else
@@ -84,7 +84,7 @@ namespace JobBoard.Controllers
                     HttpContext.Session.SetString("Email", user.Email);
                     HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
 
-                    var jobPosts = _jobPostRepository.GetAllJobPosts();
+                    var jobPosts = _jobPosterRepository.GetAllJobPosts();
                     return View("Index", new IndexViewModel() { JobPosts = jobPosts });
                 }
                 else

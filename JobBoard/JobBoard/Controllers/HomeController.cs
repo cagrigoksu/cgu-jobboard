@@ -8,11 +8,11 @@ namespace JobBoard.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IJobPostRepository? _jobPostRepository;
+        private readonly IJobPosterRepository? _jobPostRepository;
         private readonly IJobApplicationRepository? _jobApplicationRepository;
         private readonly IDBUtilsRepository? _dbUtilsRepository;
 
-        public HomeController(IJobPostRepository? jobPostRepository, IJobApplicationRepository? jobApplicationRepository, IDBUtilsRepository? dbUtilsRepository)
+        public HomeController(IJobPosterRepository? jobPostRepository, IJobApplicationRepository? jobApplicationRepository, IDBUtilsRepository? dbUtilsRepository)
         {
             _jobPostRepository = jobPostRepository;
             _jobApplicationRepository = jobApplicationRepository;

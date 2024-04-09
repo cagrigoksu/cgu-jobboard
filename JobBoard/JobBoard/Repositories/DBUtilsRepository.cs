@@ -13,7 +13,6 @@ namespace JobBoard.Repositories
 
         public bool DBConnectionCheck()
         {
-            var job = _db.Users.First();
             try
             {
                 return true;

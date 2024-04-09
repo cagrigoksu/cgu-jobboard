@@ -1,0 +1,86 @@
+﻿@using JobBoard.Enums
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model JobBoard.Models.View.ApplicantDetailViewModel
+
+<h4>Applicant for @Model.JobTitle Position</h4>
+
+<label for="applicationDateInput">Application Date</label>
+<br />
+<input class="form-control" style="max-width:20em;" type="date" id="applicationDateInput" asp-for="ApplicationDate" readonly/>
+<br/>
+<label for="nameInput">Name</label>
+<br />
+<input class="form-control" style="max-width:20em;" type="text" id="nameInput" asp-for="Name" readonly/>
+<br/>
+<label for="surnameInput">Surname</label>
+<br />
+<input class="form-control" style="max-width:20em;" type="text" id="surnameInput" asp-for="Surname" readonly />
+<br />
+<label for="emailInput">Email</label>
+<br />
+<input class="form-control" style="max-width:20em;" type="text" id="emailInput" asp-for="Email" readonly />
+<br />
+<label for="phoneInput">Phone Number</label>
+<br />
+<input class="form-control" style="max-width:20em;" type="text" id="phoneInput" asp-for="PhoneNumber" readonly />
+<br/>
+<a class="btn btn-outline-dark" style="min-width:9.8em;" 
+        asp-action="DownloadResumePdf" asp-controller="Poster" 
+        asp-route-jobId="@Model.JobId" asp-route-applicantId="@Model.ApplicantId" >CV</a>
+
+<a class="btn btn-outline-dark" style="min-width:9.8em;"
+        asp-action="DownloadMotivationLetterPdf" asp-controller="Poster"
+        asp-route-jobId="@Model.JobId" asp-route-applicantId="@Model.ApplicantId">Motivation Letter</a>
+<br />
+<br/>
+<label for="applicationStatusSelect">Application Status</label>
+
+<div style="max-width:20em; display:flex;">
+    
+    <select id="applicationStatusSelect" class="form-control" asp-for="@Model.ApplicationStatus" style="margin-right:1em;">
+        @{
+            foreach (var enumItem in Enum.GetValues(typeof(ApplicationStatusEnum)))
+            {
+                        <option value="@((int)enumItem)" selected="@((int)Model.ApplicationStatus == (int)enumItem)"> @(enumItem) </option>
+            }
+        }
+    </select>
+    
+    @* <a class="btn btn-outline-info" asp-action="ChangeApplicantStatus"  *@
+    @*    asp-route-jobId="@Model.JobId" *@
+    @*    asp-route-applicantId="@Model.ApplicantId" *@
+    @*    asp-route-applicationStatus="@Model.ApplicationStatus">Save</a> *@
+
+    <a class="btn btn-outline-info" onclick="changeApplicationStatus('@Url.Action("ChangeApplicantStatus")',@Model.JobId, @Model.ApplicantId)">Save</a>
+</div>
+
+
+<br /> 
+<div id="alert" class="alert alert-success" style="max-width:20em; display:none;">
+    Applicant status changed!
+</div>
+
+
+<script type="text/javascript">
+
+    changeApplicationStatus = (url, jobId, applicantId) => {
+        console.log(jobId);
+        var status = document.getElementById("applicationStatusSelect").value;
+        console.log(status);
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: {
+                JobId: jobId,
+                ApplicantId: applicantId,
+                ApplicationStatusInt: status
+            },
+            success: function (result) {
+                if (result == 200) { 
+                    document.getElementById("alert").style.display = "block";
+                }            
+            }
+        });
+    }
+
+</script>

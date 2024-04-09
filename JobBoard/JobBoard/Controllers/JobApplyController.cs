@@ -11,10 +11,10 @@ namespace JobBoard.Controllers
     public class JobApplyController : Controller
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IJobPostRepository? _jobPostRepository;
+        private readonly IJobPosterRepository? _jobPostRepository;
         private readonly IJobApplicationRepository? _jobApplicationRepository;
 
-        public JobApplyController(IJobPostRepository? jobPostRepository, IJobApplicationRepository? jobApplicationRepository, IWebHostEnvironment webHostEnvironment)
+        public JobApplyController(IJobPosterRepository? jobPostRepository, IJobApplicationRepository? jobApplicationRepository, IWebHostEnvironment webHostEnvironment)
         {
             _jobPostRepository = jobPostRepository;
             _jobApplicationRepository = jobApplicationRepository;
