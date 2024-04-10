@@ -3,7 +3,6 @@ using JobBoard.Repositories;
 using JobBoard.Repositories.Interfaces;
 using JobBoard.Services;
 using JobBoard.Services.Interfaces;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

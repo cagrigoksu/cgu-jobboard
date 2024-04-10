@@ -1,8 +1,6 @@
 ﻿using JobBoard.Models.Data;
 using JobBoard.Repositories.Interfaces;
 using JobBoard.Services.Interfaces;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JobBoard.Services
 {

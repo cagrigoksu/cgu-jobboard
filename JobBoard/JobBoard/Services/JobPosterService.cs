@@ -2,9 +2,6 @@
 using JobBoard.Models.Data;
 using JobBoard.Repositories.Interfaces;
 using JobBoard.Services.Interfaces;
-using Microsoft.Extensions.Hosting;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JobBoard.Services
 {
@@ -20,6 +17,18 @@ namespace JobBoard.Services
         {
             var data = _jobPosterRepository.GetAllJobPosts();
             return data;
+        }
+
+        public IQueryable<JobPostDataModel> GetAllJobPostsByPage(int pageNumber)
+        {
+            var data = _jobPosterRepository.GetAllJobPostsByPage(pageNumber);
+            return data;
+        }
+
+        public int GetJobPostsMaxPageNumber(int listCount)
+        {
+            var _temp = listCount % Globals.MaxItemForJobList;
+            return _temp == 0 ? listCount / Globals.MaxItemForJobList : (listCount / Globals.MaxItemForJobList) + 1;
         }
 
         public IQueryable<JobPostDataModel> GetUserBasedJobPosts(int userId)

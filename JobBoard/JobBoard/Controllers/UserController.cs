@@ -1,34 +1,29 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using JobBoard.Models.Data;
 using JobBoard.Models.View;
 using JobBoard.Models.Classes;
-using JobBoard.Repositories.Interfaces;
-using JobBoard.Services;
 using JobBoard.Services.Interfaces;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace JobBoard.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IJobPosterRepository? _jobPosterRepository;
+        private readonly IJobPosterService? _jobPosterService;
         private readonly IUserService? _userService;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly ISecurityService _securityService;
+        private readonly ISecurityService? _securityService;
 
-        public UserController(IJobPosterRepository jobPosterRepository, IUserService? userService, IWebHostEnvironment webHostEnvironment, ISecurityService securityService)
-        {
-            _jobPosterRepository = jobPosterRepository;
-            _userService = userService;
-            _webHostEnvironment = webHostEnvironment;
-            _securityService = securityService;
-        }
+        private readonly IWebHostEnvironment? _webHostEnvironment;
         
+
+        public UserController(IJobPosterService? jobPosterService, IUserService? userService, ISecurityService? securityService, IWebHostEnvironment? webHostEnvironment)
+        {
+            _jobPosterService = jobPosterService;
+            _userService = userService;
+            _securityService = securityService;
+            _webHostEnvironment = webHostEnvironment;
+        }
+
+
         public IActionResult LogIn()
         {
             return View();
@@ -52,8 +47,8 @@ namespace JobBoard.Controllers
                     HttpContext.Session.SetString("Email", user.Email);
                     HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
 
-                    var jobPosts = _jobPosterRepository.GetAllJobPosts();
-                    return View("Index", new IndexViewModel() { UserId = user.Id, CompanyUser = user.CompanyUser, JobPosts = jobPosts });
+                    var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
+                    return View("Index", new IndexViewModel() { UserId = user.Id, CompanyUser = user.CompanyUser, JobPosts = jobPosts, PageNumber = 1});
                 }
                
             }
@@ -104,8 +99,8 @@ namespace JobBoard.Controllers
                         HttpContext.Session.SetString("Email", user.Email);
                         HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
 
-                        var jobPosts = _jobPosterRepository.GetAllJobPosts();
-                        return View("Index", new IndexViewModel() { JobPosts = jobPosts });
+                        var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
+                        return View("Index", new IndexViewModel() { JobPosts = jobPosts, PageNumber = 1});
                     }
                     // TODO: user not found.
                     return NotFound();

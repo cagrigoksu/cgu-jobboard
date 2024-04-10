@@ -1,5 +1,4 @@
-﻿using JobBoard.DataContext;
-using JobBoard.Enums;
+﻿using JobBoard.Enums;
 using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
 using JobBoard.Models.View;

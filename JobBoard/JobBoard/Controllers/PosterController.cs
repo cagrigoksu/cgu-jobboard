@@ -1,14 +1,10 @@
-﻿using System.Collections.Immutable;
-using JobBoard.DataContext;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
 using JobBoard.Models.View;
 using JobBoard.Repositories.Interfaces;
-using System.Diagnostics.Metrics;
 using JobBoard.Enums;
 using JobBoard.Services.Interfaces;
-using Microsoft.AspNetCore.Hosting;
 
 namespace JobBoard.Controllers
 {

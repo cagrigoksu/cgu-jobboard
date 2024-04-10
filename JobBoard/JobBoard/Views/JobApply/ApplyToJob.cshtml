@@ -29,13 +29,13 @@
     <br>
     <h5>Your Resume</h5>
     <br />
-    <input type="file" asp-for="CV"/>
+    <input class="form-control" type="file" asp-for="CV"/>
     <br>
-    <input type="file" asp-for="MotivationLetter" />
+    <input class="form-control" type="file" asp-for="MotivationLetter" />
     @* <input type="button" value="edit this post" asp-route-id="@Model.JobId" asp-route-edit="@true" onclick="@("window.location.href='"+@Url.Action("EditJobPost", "Poster", new {id = Model.Id, edit=true })+"'")" /> *@
     @* *@
 
-
+    <br/>
     <input type="submit" value="Apply" class="btn btn-success"/>
 </form>
 

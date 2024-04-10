@@ -1,11 +1,7 @@
 ﻿using JobBoard.DataContext;
 using JobBoard.Models.Data;
 using JobBoard.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.IO;
-using JobBoard.Enums;
 using JobBoard.Models.Classes;
-using Microsoft.Extensions.Hosting;
 
 namespace JobBoard.Repositories
 {

@@ -1,5 +1,4 @@
-﻿using JobBoard.Enums;
-using JobBoard.Models.Classes;
+﻿using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
 
 namespace JobBoard.Repositories.Interfaces

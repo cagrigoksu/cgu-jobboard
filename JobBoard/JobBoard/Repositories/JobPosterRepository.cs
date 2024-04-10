@@ -1,7 +1,6 @@
 ﻿using JobBoard.DataContext;
 using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
-using JobBoard.Models.View;
 using JobBoard.Repositories.Interfaces;
 
 namespace JobBoard.Repositories
@@ -20,6 +19,19 @@ namespace JobBoard.Repositories
 
             return jobPosts;
         }
+
+        public IQueryable<JobPostDataModel> GetAllJobPostsByPage(int pageNumber)
+        {
+            var take = Globals.MaxItemForJobList;
+            var skip = (pageNumber - 1) * Globals.MaxItemForJobList;
+
+            var jobPosts = from post in _db.JobPosts where post.IsDeleted == false select post;
+          
+            jobPosts = jobPosts.Skip(skip).Take(take);
+          
+            return jobPosts;
+        }
+
 
         public IQueryable<JobPostDataModel> GetUserBasedJobPosts(int userId)
         {

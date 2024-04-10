@@ -6,6 +6,8 @@ namespace JobBoard.Services.Interfaces
     public interface IJobPosterService
     {
         IQueryable<JobPostDataModel> GetAllJobPosts();
+        IQueryable<JobPostDataModel> GetAllJobPostsByPage(int pageNumber);
+        int GetJobPostsMaxPageNumber(int listCount);
         IQueryable<JobPostDataModel> GetUserBasedJobPosts(int userId);
         JobPostDataModel GetJobPost(int id);
         void AddJobPost(JobPostDataModel post);

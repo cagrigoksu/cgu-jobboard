@@ -1,6 +1,5 @@
 ﻿using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
-using JobBoard.Models.View;
 
 namespace JobBoard.Services.Interfaces
 {

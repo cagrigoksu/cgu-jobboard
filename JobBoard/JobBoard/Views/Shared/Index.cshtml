@@ -24,14 +24,13 @@
             Location
         </th>
         <th>
-                @Html.DisplayNameFor(model => model.JobPostDate)
+            @Html.DisplayNameFor(model => model.JobPostDate)
         </th>
-        <th></th>
     </tr>
     </thead>
     <tbody>
     @foreach (var item in Model.JobPosts) {
-            <tr onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId=item.Id, companyUser = @Model.CompanyUser})','Job details')">
+        <tr onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId=item.Id, companyUser = @Model.CompanyUser})','Job details')">
             <td>
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
@@ -48,20 +47,18 @@
                
                 @Html.DisplayFor(modelItem => postDate)
             </td>
-            @{
-                @* if (!Model.CompanyUser) *@
-                @* { *@
-                @*     <td> *@
-                @*         <input type="button" value="details" class="btn btn-outline-info" onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId=item.Id})','Job details')" /> *@
-                @* *@
-                @*         $1$ <a asp-action="" asp-route-id="@item.JobId" onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId = item.JobId})','Job details')">Details</a> #1# *@
-                @*         $1$ <input type="button" value="delete this post" onclick="showPop('@Url.Action("DeleteConfirmation", "Poster", new {deleteId=Model.Id})','Attention!')" /> #1# *@
-                @*     </td> *@
-                @* } *@
-            }
             
         </tr>
     }
     </tbody>
 </table>
+
+
+<div class="btn-group btn-group-toggle" style="display:flex; justify-content:center;">
+        <input class="btn btn-outline-dark page-number-button" type="button"
+               id="listPrev" @(Model.PageNumber == 1 ? "disabled": "") autocomplete="off" value="Previous" onclick="@("window.location.href='"+@Url.Action("Index", "Home", new {pageNumber = @Model.PageNumber-1})+"'")">
+        <span class="page-number-status">@Model.PageNumber.ToString()</span>
+        <input class="btn btn-outline-dark page-number-button" type="button" 
+               id="listNext" autocomplete="off" value="Next" onclick="@("window.location.href='"+@Url.Action("Index","Home", new {pageNumber = @Model.PageNumber+1})+"'")">
+</div>
 
