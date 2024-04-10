@@ -12,10 +12,11 @@ namespace JobBoard.Repositories
             _db = db;
         }
 
-        public UserDataModel GetUser(string email, string pwd)
+        public UserDataModel GetUser(string email)
         {
             var user = _db.Users.
-                FirstOrDefault(x => x.Email == email && x.Password == pwd && x.IsDeleted == false);
+                FirstOrDefault(x => x.Email == email 
+                                    && x.IsDeleted == false);
 
             return user;
         }
@@ -67,6 +68,12 @@ namespace JobBoard.Repositories
 
             _db.Update(user);
             _db.SaveChanges();
+        }
+
+        public bool IsUserExist(string email)
+        {
+            var user = _db.Users.FirstOrDefault(x=>x.Email == email);
+            return user != null;
         }
     }
 }

@@ -63,3 +63,12 @@ body {
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .dropbtn {
 }
+
+.page-number-status {
+    margin: 1em 1em;
+}
+
+.page-number-button {
+    max-width : 6em;
+    max-height: 3em;
+}

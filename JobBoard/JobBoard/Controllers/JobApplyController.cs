@@ -1,5 +1,4 @@
-﻿using JobBoard.DataContext;
-using JobBoard.Enums;
+﻿using JobBoard.Enums;
 using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
 using JobBoard.Models.View;
@@ -11,10 +10,10 @@ namespace JobBoard.Controllers
     public class JobApplyController : Controller
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IJobPostRepository? _jobPostRepository;
+        private readonly IJobPosterRepository? _jobPostRepository;
         private readonly IJobApplicationRepository? _jobApplicationRepository;
 
-        public JobApplyController(IJobPostRepository? jobPostRepository, IJobApplicationRepository? jobApplicationRepository, IWebHostEnvironment webHostEnvironment)
+        public JobApplyController(IJobPosterRepository? jobPostRepository, IJobApplicationRepository? jobApplicationRepository, IWebHostEnvironment webHostEnvironment)
         {
             _jobPostRepository = jobPostRepository;
             _jobApplicationRepository = jobApplicationRepository;
@@ -70,8 +69,6 @@ namespace JobBoard.Controllers
                 using FileStream streamML = new FileStream(Path.Combine(pathML, filenameMotivation), FileMode.Create);
                 view.CV.CopyTo(streamCV);
                 view.MotivationLetter.CopyTo(streamML);
-
-                // TODO: if(view.Motivation){}
 
                 var jobApp = new JobApplicationDataModel()
                 {

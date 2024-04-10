@@ -16,5 +16,7 @@ namespace JobBoard.Models.View
         public bool IsApplied { get; set; }
 
         public IQueryable<JobPostDataModel> JobPosts { get; set; }
+        public int PageNumber { get; set; }
+        public int MaxPageNumer { get; set; }   
     }
 }

@@ -1,8 +1,6 @@
 ﻿using JobBoard.Models.Data;
 using JobBoard.Repositories.Interfaces;
 using JobBoard.Services.Interfaces;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JobBoard.Services
 {
@@ -15,11 +13,16 @@ namespace JobBoard.Services
             _userRepository = userRepository;
         }
 
-        public UserDataModel GetUser(string email, string pwd)
+        public UserDataModel GetUser(string email)
         {
-            var user = _userRepository.GetUser(email, pwd);
+            var user = _userRepository.GetUser(email);
 
             return user;
+        }
+
+        public bool IsUserExist(string email)
+        {
+            return _userRepository.IsUserExist(email);
         }
 
         public UserProfileDataModel GetUserProfile(int userId)

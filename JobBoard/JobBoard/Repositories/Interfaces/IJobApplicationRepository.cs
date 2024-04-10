@@ -1,5 +1,4 @@
-﻿using JobBoard.Enums;
-using JobBoard.Models.Classes;
+﻿using JobBoard.Models.Classes;
 using JobBoard.Models.Data;
 
 namespace JobBoard.Repositories.Interfaces
@@ -10,7 +9,7 @@ namespace JobBoard.Repositories.Interfaces
         void AddJobApplication(JobApplicationDataModel jobApplication);
         IQueryable<AppliedJobsListModel> GetUserBasedJobApplications(int userId);
         void WithdrawJobApplication(int jobId);
-        IQueryable<JobApplicantsListModel> GetJobApplicantsList(int jobId);
 
+        void EditJobApplication(JobApplicationDataModel model);
     }
 }

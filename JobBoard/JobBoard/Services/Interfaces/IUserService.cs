@@ -4,7 +4,8 @@ namespace JobBoard.Services.Interfaces
 {
     public interface IUserService
     {
-        UserDataModel GetUser(string email, string pwd);
+        UserDataModel GetUser(string email);
+        bool IsUserExist(string email);
         UserProfileDataModel GetUserProfile(int userId);
         void AddUser(UserDataModel user);
         void AddUserProfile(UserProfileDataModel profile);

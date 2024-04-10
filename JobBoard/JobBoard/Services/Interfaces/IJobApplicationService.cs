@@ -9,8 +9,7 @@ namespace JobBoard.Services.Interfaces
         void AddJobApplication(JobApplicationDataModel jobApplication);
         IQueryable<AppliedJobsListModel> GetUserBasedJobApplications(int userId);
         void WithdrawJobApplication(int jobId);
-        IQueryable<JobApplicantsListModel> GetJobApplicantsList(int jobId);
 
-
+        void EditJobApplication(JobApplicationDataModel view);
     }
 }

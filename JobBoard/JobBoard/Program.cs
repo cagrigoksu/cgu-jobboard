@@ -3,7 +3,6 @@ using JobBoard.Repositories;
 using JobBoard.Repositories.Interfaces;
 using JobBoard.Services;
 using JobBoard.Services.Interfaces;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,12 +30,15 @@ builder.Services.AddSession(options => {
 builder.Services.AddMvc();
 
 builder.Services.AddScoped<IDBUtilsRepository, DBUtilsRepository>();
+
 builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
-builder.Services.AddScoped<IJobPostRepository, JobPostRepository>();
+builder.Services.AddScoped<IJobPosterRepository, JobPosterRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
+builder.Services.AddScoped<IJobPosterService, JobPosterService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ISecurityService, SecurityService>();
 
 var app = builder.Build();
 

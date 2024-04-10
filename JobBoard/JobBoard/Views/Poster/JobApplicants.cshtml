@@ -25,9 +25,9 @@
         {
             trStyle = "background-color: #f58c8c;";
         }
-        
 
-        <tr style="@trStyle">
+
+            <tr style="@trStyle" onclick="@("window.location.href='" +@Url.Action("ApplicantDetail","Poster", new {applicantId = @applicant.ApplicantId, jobId = @Model.JobId})+ "'");">
             <td>@Html.DisplayFor(m => applicant.ApplicantId)</td>
             <td>@Html.DisplayFor(m => applicant.Name)</td>
             <td>@Html.DisplayFor(m => applicant.Surname)</td>
@@ -38,32 +38,42 @@
                 @Html.DisplayFor(m => date)
             </td>
             <td>
-                @{
-                    var resumeURL = applicant.ResumeURL;
-                }
                 <a asp-action="DownloadResumePdf" asp-route-jobId="@Model.JobId" asp-route-applicantId="@applicant.ApplicantId">
                         <img src="~/icons/file.png" style="cursor:pointer; max-width:1em;" />
                 </a>
                 
             </td>
             <td>
-                @{
-                    var motivationURL = applicant.MotivationLetterURL;
-                }
+                
+
                 <a asp-action="DownloadMotivationLetterPdf" asp-route-jobId="@Model.JobId" asp-route-applicantId="@applicant.ApplicantId">
                     <img src="~/icons/file.png" style="cursor:pointer; max-width:1em;" />
                 </a>
             </td>
-                <td>
-                    <select class="form-control" disabled>
-                        @{
-                            foreach (var enumItem in Enum.GetValues(typeof(ApplicationStatusEnum)))
-                            {
-                                <option value="@((int)enumItem)" selected="@((int)applicant.Status == (int)enumItem)"> @(enumItem) </option>
-                            }
+            <td>
+                @{
+                    var statusStyle = "btn-info";
+
+                        if (applicant.Status == ApplicationStatusEnum.InProgress)
+                    {
+                        statusStyle = "btn-warning";
+
+                    }
+                        else if (applicant.Status == ApplicationStatusEnum.NotSelected)
+                    {
+                        statusStyle = "btn-danger";
+
+                    }
+                }
+                    <select class="form-control @statusStyle" disabled>
+                    @{
+                        foreach (var enumItem in Enum.GetValues(typeof(ApplicationStatusEnum)))
+                        {
+                            <option value="@((int)enumItem)" selected="@((int)applicant.Status == (int)enumItem)"> @(enumItem) </option>
                         }
-                    </select>
-                </td>
+                    }
+                </select>
+            </td>
 
         </tr>
     }

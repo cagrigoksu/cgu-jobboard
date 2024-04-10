@@ -3,38 +3,41 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using JobBoard.Models.View;
 using JobBoard.Repositories.Interfaces;
+using JobBoard.Services.Interfaces;
 
 namespace JobBoard.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IJobPostRepository? _jobPostRepository;
-        private readonly IJobApplicationRepository? _jobApplicationRepository;
+        private readonly IJobPosterService? _jobPosterService;
+        private readonly IJobApplicationService? _jobApplicationService;
         private readonly IDBUtilsRepository? _dbUtilsRepository;
 
-        public HomeController(IJobPostRepository? jobPostRepository, IJobApplicationRepository? jobApplicationRepository, IDBUtilsRepository? dbUtilsRepository)
+        public HomeController(IJobPosterService? jobPosterService, IJobApplicationService? jobApplicationService, IDBUtilsRepository? dbUtilsRepository)
         {
-            _jobPostRepository = jobPostRepository;
-            _jobApplicationRepository = jobApplicationRepository;
+            _jobPosterService = jobPosterService;
+            _jobApplicationService = jobApplicationService;
             _dbUtilsRepository = dbUtilsRepository;
         }
 
-        public IActionResult Index()
+
+        public IActionResult Index(int pageNumber = 1)
         {
             if (new SessionUtils().EmptySession())
             {
                 return View("LogIn");
             }
 
-            var jobPosts = _jobPostRepository.GetAllJobPosts();
+            var pagedJobPosts = _jobPosterService.GetAllJobPostsByPage(pageNumber);
+            //var maxPageNumber = _jobPosterService.GetJobPostsMaxPageNumber(jobPosts.Count());
 
-            return View(new IndexViewModel() { UserId = Globals.UserId, CompanyUser = Globals.CompanyUser, JobPosts = jobPosts });
+            return View(new IndexViewModel() { UserId = Globals.UserId, CompanyUser = Globals.CompanyUser, JobPosts = pagedJobPosts, PageNumber = pageNumber});
         }
 
         public IActionResult JobPostDetail(int jobId, bool companyUser)
         {
-            var job = _jobPostRepository.GetJobPost(jobId);
-            var isApplied = _jobApplicationRepository.GetUserJobApplication(Globals.UserId, jobId);
+            var job = _jobPosterService.GetJobPost(jobId);
+            var isApplied = _jobApplicationService.GetUserJobApplication(Globals.UserId, jobId);
 
             var result = new JobApplyViewModel()
             {
