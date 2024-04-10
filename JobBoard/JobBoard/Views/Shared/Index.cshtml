@@ -7,58 +7,60 @@
 }
 
 @* <div class="text-center"> *@
-@*     <h1 class="display-4">Welcome</h1> *@
-@*     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p> *@
+@* <h1 class="display-4">Welcome</h1> *@
+@* <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p> *@
 @* </div> *@
 
 <table class="table table-striped">
     <thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.JobId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.JobTitle)
-        </th>
-        <th>
-            Location
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.JobPostDate)
-        </th>
-    </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.JobId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.JobTitle)
+            </th>
+            <th>
+                Location
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.JobPostDate)
+            </th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model.JobPosts) {
-        <tr onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId=item.Id, companyUser = @Model.CompanyUser})','Job details')">
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @item.City, @item.Country
-            </td>
-            <td>
-                @{
-                    var postDate = item.PostDate.ToShortDateString();
-                }
-               
-                @Html.DisplayFor(modelItem => postDate)
-            </td>
-            
-        </tr>
-    }
+        @foreach (var item in Model.JobPosts)
+        {
+            <tr
+                onclick="showPop('@Url.Action("JobPostDetail", "Home", new {jobId=item.Id, companyUser = @Model.CompanyUser})','Job details')">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @item.City, @item.Country
+                </td>
+                <td>
+                    @{
+                        var postDate = item.PostDate.ToShortDateString();
+                    }
+
+                    @Html.DisplayFor(modelItem => postDate)
+                </td>
+
+            </tr>
+        }
     </tbody>
 </table>
 
 
 <div class="btn-group btn-group-toggle" style="display:flex; justify-content:center;">
-        <input class="btn btn-outline-dark page-number-button" type="button"
-               id="listPrev" @(Model.PageNumber == 1 ? "disabled": "") autocomplete="off" value="Previous" onclick="@("window.location.href='"+@Url.Action("Index", "Home", new {pageNumber = @Model.PageNumber-1})+"'")">
-        <span class="page-number-status">@Model.PageNumber.ToString()</span>
-        <input class="btn btn-outline-dark page-number-button" type="button" 
-               id="listNext" autocomplete="off" value="Next" onclick="@("window.location.href='"+@Url.Action("Index","Home", new {pageNumber = @Model.PageNumber+1})+"'")">
+    <input class="btn btn-outline-dark page-number-button" type="button" id="listPrev" @(Model.PageNumber == 1 ?
+        "disabled" : "") autocomplete="off" value="Previous"
+        onclick="@("window.location.href='" + @Url.Action("Index", "Home", new { pageNumber = @Model.PageNumber - 1 }) + "'")">
+    <span class="page-number-status">@Model.PageNumber.ToString()</span>
+    <input class="btn btn-outline-dark page-number-button" type="button" id="listNext" autocomplete="off" value="Next"
+        onclick="@("window.location.href='"+@Url.Action("Index","Home", new {pageNumber = @Model.PageNumber+1})+"'")">
 </div>
-

@@ -50,10 +50,15 @@ namespace JobBoard.Controllers
                     var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
                     return View("Index", new IndexViewModel() { UserId = user.Id, CompanyUser = user.CompanyUser, JobPosts = jobPosts, PageNumber = 1});
                 }
-               
+
+                ModelState.Clear();
+                ViewBag.Message = "Incorrect password.";
+                return View();
             }
-            // TODO: user not found and incorrect password message
-            return NotFound();
+            
+            ModelState.Clear();
+            ViewBag.Message = "Incorrect or unregistered email.";
+            return View();
         }
 
         public IActionResult LogOn()
@@ -73,6 +78,7 @@ namespace JobBoard.Controllers
             {
                 var pwd = formCollection["pwd"];
                 var pwdConf = formCollection["pwdConf"];
+
                 if (pwd == pwdConf)
                 {
                     // generate salt and hash
@@ -102,14 +108,18 @@ namespace JobBoard.Controllers
                         var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
                         return View("Index", new IndexViewModel() { JobPosts = jobPosts, PageNumber = 1});
                     }
-                    // TODO: user not found.
-                    return NotFound();
+                    ModelState.Clear();
+                    ViewBag.Message = "User not found.";
+                    return View("LogOn");
                 }
 
+                ModelState.Clear();
+                ViewBag.Message = "Password does not match.";
                 return View("LogOn");
             }
 
-            // TODO: return user exist message.
+            ModelState.Clear();
+            ViewBag.Message = "User is already registered.";
             return View("LogOn");
         }
 

@@ -12,7 +12,6 @@ namespace JobBoardTest
 
         private readonly UserService _userService;
         private readonly Mock<IUserRepository> _userRepositoryMock = new();
-        private readonly Mock<IUserService> _userServiceMock = new();
         private readonly Mock<ISecurityService> _securityServiceMock = new();
 
         public UserRepositoryTest()
