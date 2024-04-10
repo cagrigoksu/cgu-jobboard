@@ -1,7 +1,9 @@
+using JobBoard;
 using JobBoard.Models.Data;
 using JobBoard.Repositories.Interfaces;
 using Moq;
 using JobBoard.Services;
+using JobBoard.Services.Interfaces;
 
 namespace JobBoardTest
 {
@@ -10,6 +12,8 @@ namespace JobBoardTest
 
         private readonly UserService _userService;
         private readonly Mock<IUserRepository> _userRepositoryMock = new();
+        private readonly Mock<IUserService> _userServiceMock = new();
+        private readonly Mock<ISecurityService> _securityServiceMock = new();
 
         public UserRepositoryTest()
         {
@@ -21,19 +25,20 @@ namespace JobBoardTest
         public void UserLoginTest()
         {
             var email = "user@test.com";
-            var password = "11";
+            var password = "Goksu";
+            var pwdSalt = "QWd+52BpnVuQxp5o/oJpuA==";
+            var hashedPwd = _securityServiceMock.Object.Hasher(password,pwdSalt,Globals.HashIter);
 
             var user = new UserDataModel()
             {
-                Id = 2,
                 Email = email,
-                Password = password
+                PasswordHash = hashedPwd
             };
 
-            _userRepositoryMock.Setup(x => x.GetUser(email, password))
+            _userRepositoryMock.Setup(x => x.GetUser(email))
                 .Returns(user);
 
-            var result = _userService.GetUser(email,password);
+            var result = _userService.GetUser(email);
             
             Assert.Equal(user.Id, result.Id);
         }
