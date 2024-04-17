@@ -5,6 +5,7 @@ using JobBoard.Models.Classes;
 using JobBoard.Services.Interfaces;
 using Microsoft.CodeAnalysis.Emit;
 using Newtonsoft.Json;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace JobBoard.Controllers
 {
@@ -43,8 +44,8 @@ namespace JobBoard.Controllers
                 // var payload = new StringContent(jsonPost, Encoding.UTF8, "application/json");
                 IEnumerable<KeyValuePair<string, string>> content = new List<KeyValuePair<string, string>>
                 {
-                    new ("email", email),
-                    new ("password", pwd)
+                    new("email", email),
+                    new("password", pwd)
                 };
                 var result = client.PostAsync(endpoint, new FormUrlEncodedContent(content)).Result;
 
@@ -59,9 +60,11 @@ namespace JobBoard.Controllers
                     HttpContext.Session.SetInt32("Id", user.Id);
                     HttpContext.Session.SetString("Email", user.Email);
                     HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
-                    
+
                     var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
-                    return View("Index", new IndexViewModel() { UserId = user.Id, CompanyUser = user.CompanyUser, JobPosts = jobPosts, PageNumber = 1});
+                    return View("Index",
+                        new IndexViewModel()
+                            { UserId = user.Id, CompanyUser = user.CompanyUser, JobPosts = jobPosts, PageNumber = 1 });
                 }
                 else
                 {
@@ -70,32 +73,6 @@ namespace JobBoard.Controllers
                     return View();
                 }
             }
-            // var user = _userService.GetUser(email);
-            //
-            // if (user != null)
-            // {
-            //     var hashedPwd = _securityService.Hasher(pwd, user.PasswordSalt, Globals.HashIter);
-            //
-            //     if (user.PasswordHash == hashedPwd)
-            //     {
-            //         Globals.UserId = user.Id;
-            //         Globals.CompanyUser = user.CompanyUser;
-            //         HttpContext.Session.SetInt32("Id", user.Id);
-            //         HttpContext.Session.SetString("Email", user.Email);
-            //         HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
-            //
-            //         var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
-            //         return View("Index", new IndexViewModel() { UserId = user.Id, CompanyUser = user.CompanyUser, JobPosts = jobPosts, PageNumber = 1});
-            //     }
-            //
-            //     ModelState.Clear();
-            //     ViewBag.Message = "Incorrect password.";
-            //     return View();
-            // }
-            //
-            // ModelState.Clear();
-            // ViewBag.Message = "Incorrect or unregistered email.";
-            // return View();
         }
 
         public IActionResult LogOn()
@@ -105,59 +82,40 @@ namespace JobBoard.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult LogOn(IFormCollection formCollection)
+        public async Task<IActionResult> LogOn(IFormCollection formCollection)
         {
-            // user log on
-
-            var isUserExist = _userService.IsUserExist(formCollection["email"]);
-
-            if (!isUserExist)
+            using (var client = new HttpClient())
             {
-                var pwd = formCollection["pwd"];
-                var pwdConf = formCollection["pwdConf"];
+                var endpoint = new Uri("https://cgu-api-gateway.azurewebsites.net/gateway/User/logon");
 
-                if (pwd == pwdConf)
+                IEnumerable<KeyValuePair<string, string>> content = new List<KeyValuePair<string, string>>
                 {
-                    // generate salt and hash
-                    var userSalt = _securityService.GenerateSalt();
-                    var userHashedPwd = _securityService.Hasher(pwd, userSalt, Globals.HashIter);
+                    new("email", formCollection["email"]),
+                    new("password", formCollection["pwd"]),
+                    new("passwordconf", formCollection["pwdConf"])
+                };
+                var result = client.PostAsync(endpoint, new FormUrlEncodedContent(content)).Result;
 
-                    var user = new UserDataModel()
-                    {
-                        Email = formCollection["email"],
-                        CompanyUser = formCollection["hiring"] == "on",
-                        PasswordSalt = userSalt,
-                        PasswordHash = userHashedPwd
-                    };
+                if (result.IsSuccessStatusCode)
+                {
+                    var data = await result.Content.ReadAsStringAsync();
+                    var user = JsonConvert.DeserializeObject<UserDataModel>(data);
 
-                    // save user
-                    _userService.AddUser(user);
+                    Globals.UserId = user.Id;
+                    Globals.CompanyUser = user.CompanyUser;
+                    HttpContext.Session.SetInt32("Id", user.Id);
+                    HttpContext.Session.SetString("Email", user.Email);
+                    HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
 
-                    var userResult = _userService.GetUser(user.Email);
-
-                    if (userResult != null)
-                    {
-                        Globals.UserId = user.Id;
-                        HttpContext.Session.SetInt32("Id", user.Id);
-                        HttpContext.Session.SetString("Email", user.Email);
-                        HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
-
-                        var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
-                        return View("Index", new IndexViewModel() { JobPosts = jobPosts, PageNumber = 1});
-                    }
-                    ModelState.Clear();
-                    ViewBag.Message = "User not found.";
-                    return View("LogOn");
+                    var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
+                    return View("Index", new IndexViewModel() { JobPosts = jobPosts, PageNumber = 1});
                 }
 
                 ModelState.Clear();
-                ViewBag.Message = "Password does not match.";
+                ViewBag.Message = "Error: Please check your details.";
                 return View("LogOn");
             }
 
-            ModelState.Clear();
-            ViewBag.Message = "User is already registered.";
-            return View("LogOn");
         }
 
         public IActionResult UserProfile()
