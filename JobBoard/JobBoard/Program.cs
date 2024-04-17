@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// PostgreSQL Configuration
+// Azure SQL and PostgreSQL Configuration
 var configuration = builder.Configuration;
 // AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 // builder.Services.AddDbContext<AppDbContext>(options =>
@@ -26,6 +26,9 @@ builder.Services.AddSession(options => {
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+// HttpClient
+builder.Services.AddHttpClient();
 
 builder.Services.AddMvc();
 

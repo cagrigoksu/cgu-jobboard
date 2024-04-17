@@ -3,6 +3,8 @@ using JobBoard.Models.Data;
 using JobBoard.Models.View;
 using JobBoard.Models.Classes;
 using JobBoard.Services.Interfaces;
+using Microsoft.CodeAnalysis.Emit;
+using Newtonsoft.Json;
 
 namespace JobBoard.Controllers
 {
@@ -31,34 +33,69 @@ namespace JobBoard.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult LogIn(string email, string pwd)
+        public async Task<IActionResult> LogIn(string email, string pwd)
         {
-            var user = _userService.GetUser(email);
-
-            if (user != null)
+            using (var client = new HttpClient())
             {
-                var hashedPwd = _securityService.Hasher(pwd, user.PasswordSalt, Globals.HashIter);
+                var endpoint = new Uri("https://cgu-api-gateway.azurewebsites.net/gateway/User/login");
 
-                if (user.PasswordHash == hashedPwd)
+                // var jsonPost = JsonConvert.SerializeObject(post);
+                // var payload = new StringContent(jsonPost, Encoding.UTF8, "application/json");
+                IEnumerable<KeyValuePair<string, string>> content = new List<KeyValuePair<string, string>>
                 {
+                    new ("email", email),
+                    new ("password", pwd)
+                };
+                var result = client.PostAsync(endpoint, new FormUrlEncodedContent(content)).Result;
+
+                //return new StatusCodeResult((int)result.StatusCode);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var data = await result.Content.ReadAsStringAsync();
+                    var user = JsonConvert.DeserializeObject<UserDataModel>(data);
                     Globals.UserId = user.Id;
                     Globals.CompanyUser = user.CompanyUser;
                     HttpContext.Session.SetInt32("Id", user.Id);
                     HttpContext.Session.SetString("Email", user.Email);
                     HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
-
+                    
                     var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
                     return View("Index", new IndexViewModel() { UserId = user.Id, CompanyUser = user.CompanyUser, JobPosts = jobPosts, PageNumber = 1});
                 }
-
-                ModelState.Clear();
-                ViewBag.Message = "Incorrect password.";
-                return View();
+                else
+                {
+                    ModelState.Clear();
+                    ViewBag.Message = "Incorrect email or password.";
+                    return View();
+                }
             }
-            
-            ModelState.Clear();
-            ViewBag.Message = "Incorrect or unregistered email.";
-            return View();
+            // var user = _userService.GetUser(email);
+            //
+            // if (user != null)
+            // {
+            //     var hashedPwd = _securityService.Hasher(pwd, user.PasswordSalt, Globals.HashIter);
+            //
+            //     if (user.PasswordHash == hashedPwd)
+            //     {
+            //         Globals.UserId = user.Id;
+            //         Globals.CompanyUser = user.CompanyUser;
+            //         HttpContext.Session.SetInt32("Id", user.Id);
+            //         HttpContext.Session.SetString("Email", user.Email);
+            //         HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
+            //
+            //         var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
+            //         return View("Index", new IndexViewModel() { UserId = user.Id, CompanyUser = user.CompanyUser, JobPosts = jobPosts, PageNumber = 1});
+            //     }
+            //
+            //     ModelState.Clear();
+            //     ViewBag.Message = "Incorrect password.";
+            //     return View();
+            // }
+            //
+            // ModelState.Clear();
+            // ViewBag.Message = "Incorrect or unregistered email.";
+            // return View();
         }
 
         public IActionResult LogOn()
