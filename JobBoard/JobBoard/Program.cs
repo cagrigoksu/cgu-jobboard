@@ -29,6 +29,11 @@ builder.Services.AddSession(options => {
 
 // HttpClient
 builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("api-gateway", httpClient =>
+    {
+        httpClient.BaseAddress = new Uri("https://localhost:7219"); // development
+        //httpClient.BaseAddress = new Uri("https://cgu-api-gateway.azurewebsites.net"); // production
+    });
 
 builder.Services.AddMvc();
 

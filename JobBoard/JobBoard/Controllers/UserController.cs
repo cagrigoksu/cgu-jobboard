@@ -3,9 +3,7 @@ using JobBoard.Models.Data;
 using JobBoard.Models.View;
 using JobBoard.Models.Classes;
 using JobBoard.Services.Interfaces;
-using Microsoft.CodeAnalysis.Emit;
 using Newtonsoft.Json;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace JobBoard.Controllers
 {
@@ -13,17 +11,17 @@ namespace JobBoard.Controllers
     {
         private readonly IJobPosterService? _jobPosterService;
         private readonly IUserService? _userService;
-        private readonly ISecurityService? _securityService;
-
         private readonly IWebHostEnvironment? _webHostEnvironment;
+
+        private readonly IHttpClientFactory? _httpClientFactory;
         
 
-        public UserController(IJobPosterService? jobPosterService, IUserService? userService, ISecurityService? securityService, IWebHostEnvironment? webHostEnvironment)
+        public UserController(IJobPosterService? jobPosterService, IUserService? userService, IWebHostEnvironment? webHostEnvironment, IHttpClientFactory? httpClientFactory)
         {
             _jobPosterService = jobPosterService;
             _userService = userService;
-            _securityService = securityService;
             _webHostEnvironment = webHostEnvironment;
+            _httpClientFactory = httpClientFactory;
         }
 
 
@@ -36,42 +34,39 @@ namespace JobBoard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogIn(string email, string pwd)
         {
-            using (var client = new HttpClient())
+            // prepare form-data
+            IEnumerable<KeyValuePair<string, string>> content = new List<KeyValuePair<string, string>>
             {
-                var endpoint = new Uri("https://cgu-api-gateway.azurewebsites.net/gateway/User/login");
+                new("email", email),
+                new("password", pwd)
+            };
 
-                // var jsonPost = JsonConvert.SerializeObject(post);
-                // var payload = new StringContent(jsonPost, Encoding.UTF8, "application/json");
-                IEnumerable<KeyValuePair<string, string>> content = new List<KeyValuePair<string, string>>
-                {
-                    new("email", email),
-                    new("password", pwd)
-                };
-                var result = client.PostAsync(endpoint, new FormUrlEncodedContent(content)).Result;
+            // create client and post 
+            var apiClient = _httpClientFactory.CreateClient("api-gateway");
 
-                //return new StatusCodeResult((int)result.StatusCode);
+            var result = apiClient.PostAsync("gateway/User/login", new FormUrlEncodedContent(content)).Result;
 
-                if (result.IsSuccessStatusCode)
-                {
-                    var data = await result.Content.ReadAsStringAsync();
-                    var user = JsonConvert.DeserializeObject<UserDataModel>(data);
-                    Globals.UserId = user.Id;
-                    Globals.CompanyUser = user.CompanyUser;
-                    HttpContext.Session.SetInt32("Id", user.Id);
-                    HttpContext.Session.SetString("Email", user.Email);
-                    HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
-
-                    var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
-                    return View("Index",
-                        new IndexViewModel()
-                            { UserId = user.Id, CompanyUser = user.CompanyUser, JobPosts = jobPosts, PageNumber = 1 });
-                }
-                else
-                {
-                    ModelState.Clear();
-                    ViewBag.Message = "Incorrect email or password.";
-                    return View();
-                }
+            if (result.IsSuccessStatusCode)
+            {
+                var data = await result.Content.ReadAsStringAsync();
+                var user = JsonConvert.DeserializeObject<UserDataModel>(data);
+                Globals.UserId = user.Id;
+                Globals.CompanyUser = user.CompanyUser;
+                HttpContext.Session.SetInt32("Id", user.Id);
+                HttpContext.Session.SetString("Email", user.Email);
+                HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
+            
+                // get job posts 
+                var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
+                return View("Index",
+                    new IndexViewModel()
+                        { UserId = user.Id, CompanyUser = user.CompanyUser, JobPosts = jobPosts, PageNumber = 1 });
+            }
+            else
+            {
+                ModelState.Clear();
+                ViewBag.Message = "Incorrect email or password.";
+                return View();
             }
         }
 
@@ -84,38 +79,37 @@ namespace JobBoard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOn(IFormCollection formCollection)
         {
-            using (var client = new HttpClient())
+            // prepare data
+            IEnumerable<KeyValuePair<string, string>> content = new List<KeyValuePair<string, string>>
             {
-                var endpoint = new Uri("https://cgu-api-gateway.azurewebsites.net/gateway/User/logon");
+                new("email", formCollection["email"]),
+                new("password", formCollection["pwd"]),
+                new("passwordconf", formCollection["pwdConf"])
+            };
 
-                IEnumerable<KeyValuePair<string, string>> content = new List<KeyValuePair<string, string>>
-                {
-                    new("email", formCollection["email"]),
-                    new("password", formCollection["pwd"]),
-                    new("passwordconf", formCollection["pwdConf"])
-                };
-                var result = client.PostAsync(endpoint, new FormUrlEncodedContent(content)).Result;
+            // create client and post
+            var apiClient = _httpClientFactory.CreateClient("api-gateway");
+            var result = apiClient.PostAsync("gateway/User/logon", new FormUrlEncodedContent(content)).Result;
 
-                if (result.IsSuccessStatusCode)
-                {
-                    var data = await result.Content.ReadAsStringAsync();
-                    var user = JsonConvert.DeserializeObject<UserDataModel>(data);
+            if (result.IsSuccessStatusCode)
+            {
+                var data = await result.Content.ReadAsStringAsync();
+                var user = JsonConvert.DeserializeObject<UserDataModel>(data);
 
-                    Globals.UserId = user.Id;
-                    Globals.CompanyUser = user.CompanyUser;
-                    HttpContext.Session.SetInt32("Id", user.Id);
-                    HttpContext.Session.SetString("Email", user.Email);
-                    HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
+                Globals.UserId = user.Id;
+                Globals.CompanyUser = user.CompanyUser;
+                HttpContext.Session.SetInt32("Id", user.Id);
+                HttpContext.Session.SetString("Email", user.Email);
+                HttpContext.Session.SetInt32("CompanyUser", Convert.ToInt32(user.CompanyUser));
 
-                    var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
-                    return View("Index", new IndexViewModel() { JobPosts = jobPosts, PageNumber = 1});
-                }
-
-                ModelState.Clear();
-                ViewBag.Message = "Error: Please check your details.";
-                return View("LogOn");
+                // get job posts 
+                var jobPosts = _jobPosterService.GetAllJobPostsByPage(1);
+                return View("Index", new IndexViewModel() { JobPosts = jobPosts, PageNumber = 1 });
             }
 
+            ModelState.Clear();
+            ViewBag.Message = "Error: Please check your details.";
+            return View("LogOn");
         }
 
         public IActionResult UserProfile()
@@ -142,18 +136,17 @@ namespace JobBoard.Controllers
         }
 
         [HttpPost]
-        public IActionResult UserProfile(UserProfileViewModel model)
+        public async Task<IActionResult> UserProfile(UserProfileViewModel model)
         {
             if (new SessionUtils().EmptySession())
             {
                 return View("LogIn");
             }
 
-            var profile = _userService.GetUserProfile(Globals.UserId);
-            var _UrlResume = "";
-            var _UrlMotivationLetter = "";
-            
             // Copy CV and ML files to server
+            var urlResume = "";
+            var urlMotivationLetter = "";
+
             if (model.CV != null)
             {
                 string root = Path.Combine(_webHostEnvironment.WebRootPath, "Uploads");
@@ -165,7 +158,7 @@ namespace JobBoard.Controllers
 
                 model.CV.CopyTo(streamCV);
 
-                _UrlResume = Path.Combine(pathCV, filenameCV);
+                urlResume = Path.Combine(pathCV, filenameCV);
             }
             if (model.MotivationLetter != null)
             {
@@ -178,46 +171,63 @@ namespace JobBoard.Controllers
 
                 model.MotivationLetter.CopyTo(streamML);
 
-                _UrlMotivationLetter = Path.Combine(pathML, filenameMotivation);
+                urlMotivationLetter = Path.Combine(pathML, filenameMotivation);
             }
 
-            if (profile != null)
+            // http get user-profile
+            var apiClient = _httpClientFactory.CreateClient("api-gateway");
+            var userProfileResponse = apiClient.GetAsync($"gateway/User/get-user-profile/{Globals.UserId}").Result;
+
+            var content = new List<KeyValuePair<string, string>>
+            {
+                new("UserId", Globals.UserId.ToString()),
+                new("Name", model.Name),
+                new("Surname", model.Surname),
+                new("Email", model.Email),
+                new("PhoneNumber", model.PhoneNumber)
+            };
+
+            if (urlResume != "")
+                content.Add(new("UrlResume", urlResume));
+            if (urlMotivationLetter != "")
+                content.Add(new("UrlMotivationLetter", urlMotivationLetter));
+
+            if (userProfileResponse.IsSuccessStatusCode)
             {
                 // Update existing user profile
+                var editResponse = apiClient.PostAsync("gateway/User/edit-user-profile", new FormUrlEncodedContent(content));
 
-                profile.Name = model.Name;
-                profile.Surname = model.Surname;
-                profile.PhoneNumber = model.PhoneNumber;
-                profile.Email = model.Email;
+                if (editResponse.Result.IsSuccessStatusCode)
+                {
+                    ModelState.Clear();
+                    ViewBag.Message = "Successfully edited.";
+                    model.CompanyUser = Convert.ToBoolean(HttpContext.Session.GetInt32("CompanyUser"));
 
-                if (_UrlResume != "")
-                    profile.UrlResume = _UrlResume;
-                if (_UrlMotivationLetter != "")
-                    profile.UrlMotivationLetter = _UrlMotivationLetter;
-                _userService.EditUserProfile(profile);
+                    return View(model);
+                }
             }
             else
             {
                 // Add new user profile
-                profile = new UserProfileDataModel();
-                profile.UserId = Globals.UserId;
-                profile.Name = model.Name;
-                profile.Surname = model.Surname;
-                profile.PhoneNumber = model.PhoneNumber;
-                profile.Email = model.Email;
+                var addResponse = apiClient.PostAsync("gateway/User/add-user-profile", new FormUrlEncodedContent(content));
 
-                if (_UrlResume != "")
-                    profile.UrlResume = _UrlResume;
-                if (_UrlMotivationLetter != "")
-                    profile.UrlMotivationLetter = _UrlMotivationLetter;
-                _userService.AddUserProfile(profile);
+                if (addResponse.Result.IsSuccessStatusCode)
+                {
+                    ModelState.Clear();
+                    ViewBag.Message = "Successfully saved.";
+                    model.CompanyUser = Convert.ToBoolean(HttpContext.Session.GetInt32("CompanyUser"));
+
+                    return View(model);
+                }
             }
 
+            // TODO: create error code list
             ModelState.Clear();
-            ViewBag.Message = "Successfully saved.";
+            ViewBag.Message = "Error occured while connecting to server.";
             model.CompanyUser = Convert.ToBoolean(HttpContext.Session.GetInt32("CompanyUser"));
 
             return View(model);
+
         }
 
         public IActionResult LogOut()
