@@ -10,16 +10,14 @@ namespace JobBoard.Controllers
     public class UserController : Controller
     {
         private readonly IJobPosterService? _jobPosterService;
-        private readonly IUserService? _userService;
         private readonly IWebHostEnvironment? _webHostEnvironment;
 
         private readonly IHttpClientFactory? _httpClientFactory;
         
 
-        public UserController(IJobPosterService? jobPosterService, IUserService? userService, IWebHostEnvironment? webHostEnvironment, IHttpClientFactory? httpClientFactory)
+        public UserController(IJobPosterService? jobPosterService, IWebHostEnvironment? webHostEnvironment, IHttpClientFactory? httpClientFactory)
         {
             _jobPosterService = jobPosterService;
-            _userService = userService;
             _webHostEnvironment = webHostEnvironment;
             _httpClientFactory = httpClientFactory;
         }
@@ -112,7 +110,7 @@ namespace JobBoard.Controllers
             return View("LogOn");
         }
 
-        public IActionResult UserProfile()
+        public async Task<IActionResult> UserProfile()
         {
             if (new SessionUtils().EmptySession())
             {
@@ -121,8 +119,9 @@ namespace JobBoard.Controllers
 
             var result = new UserProfileViewModel();
 
-            var profile = _userService.GetUserProfile(Globals.UserId);
-
+            var apiClient = _httpClientFactory.CreateClient("api-gateway");
+            var response = await apiClient.GetAsync($"gateway/User/get-user-profile/{Globals.UserId}").Result.Content.ReadAsStringAsync();
+            var profile = JsonConvert.DeserializeObject<UserProfileDataModel>(response);
             if (profile != null)
             {
                 result.Name = profile.Name;

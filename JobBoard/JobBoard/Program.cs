@@ -31,8 +31,8 @@ builder.Services.AddSession(options => {
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient("api-gateway", httpClient =>
     {
-        httpClient.BaseAddress = new Uri("https://localhost:7219"); // development
-        //httpClient.BaseAddress = new Uri("https://cgu-api-gateway.azurewebsites.net"); // production
+        //httpClient.BaseAddress = new Uri("https://localhost:7219"); // development
+        httpClient.BaseAddress = new Uri("https://cgu-api-gateway.azurewebsites.net"); // production
     });
 
 builder.Services.AddMvc();
@@ -41,11 +41,9 @@ builder.Services.AddScoped<IDBUtilsRepository, DBUtilsRepository>();
 
 builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
 builder.Services.AddScoped<IJobPosterRepository, JobPosterRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 builder.Services.AddScoped<IJobPosterService, JobPosterService>();
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
 
 var app = builder.Build();

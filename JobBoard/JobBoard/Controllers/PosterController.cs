@@ -5,6 +5,7 @@ using JobBoard.Models.View;
 using JobBoard.Repositories.Interfaces;
 using JobBoard.Enums;
 using JobBoard.Services.Interfaces;
+using Newtonsoft.Json;
 
 namespace JobBoard.Controllers
 {
@@ -12,20 +13,19 @@ namespace JobBoard.Controllers
     {
         private readonly IJobPosterRepository _jobPosterRepository;
         private readonly IJobPosterService _jobPosterService;
-
         private readonly IJobApplicationService _jobApplicationService;
-
-        private readonly IUserService _userService;
 
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public PosterController(IJobPosterRepository jobPosterRepository, IJobApplicationService jobApplicationService, IWebHostEnvironment webHostEnvironment, IJobPosterService jobPosterService, IUserService userService)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public PosterController(IJobPosterRepository jobPosterRepository, IJobApplicationService jobApplicationService, IWebHostEnvironment webHostEnvironment, IJobPosterService jobPosterService, IHttpClientFactory httpClientFactory)
         {
             _jobPosterRepository = jobPosterRepository;
             _jobApplicationService = jobApplicationService;
             _webHostEnvironment = webHostEnvironment;
             _jobPosterService = jobPosterService;
-            _userService = userService;
+            _httpClientFactory = httpClientFactory;
         }
 
 
@@ -159,12 +159,16 @@ namespace JobBoard.Controllers
         }
 
         [HttpGet]   // Get applicant detail for a job post
-        public IActionResult ApplicantDetail(int applicantId, int jobId)
+        public async Task<IActionResult> ApplicantDetail(int applicantId, int jobId)
         {
             var job = _jobPosterService.GetJobPost(jobId);
             var application = _jobApplicationService.GetUserJobApplication(applicantId, jobId);
-            var applicantProfile = _userService.GetUserProfile(application.ApplicantId);
+            // var applicantProfile = _userService.GetUserProfile(application.ApplicantId);
 
+            // TODO: check returning result code
+            var httpClient = _httpClientFactory.CreateClient("api-gateway");
+            var response = await httpClient.GetAsync($"User/get-user-profile/{Globals.UserId}").Result.Content.ReadAsStringAsync();
+            var applicantProfile =  JsonConvert.DeserializeObject<UserProfileDataModel>(response);
 
             ApplicantDetailViewModel view = new ApplicantDetailViewModel();
             
