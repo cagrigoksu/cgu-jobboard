@@ -75,7 +75,7 @@ namespace JobBoard.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LogOn(IFormCollection formCollection)
+        public async Task<IActionResult> LogOn([FromBody]IFormCollection formCollection)
         {
             // prepare data
             IEnumerable<KeyValuePair<string, string>> content = new List<KeyValuePair<string, string>>

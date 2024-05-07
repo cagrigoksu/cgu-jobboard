@@ -35,6 +35,13 @@ builder.Services.AddHttpClient("api-gateway", httpClient =>
         httpClient.BaseAddress = new Uri("https://cgu-api-gateway.azurewebsites.net"); // production
     });
 
+builder.Services.AddHttpClient("jobboard", httpClient =>
+    {
+        httpClient.BaseAddress = new Uri("https://localhost:7037"); // development
+    });
+
+
+
 builder.Services.AddMvc();
 
 builder.Services.AddScoped<IDBUtilsRepository, DBUtilsRepository>();
@@ -45,6 +52,9 @@ builder.Services.AddScoped<IJobPosterRepository, JobPosterRepository>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
 builder.Services.AddScoped<IJobPosterService, JobPosterService>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
+
+// Blazor
+builder.Services.AddServerSideBlazor();
 
 var app = builder.Build();
 
@@ -68,6 +78,9 @@ app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Blazor
+app.MapBlazorHub();
 
 System.IO.Directory.CreateDirectory("./wwwroot/Uploads/Resumes/Application");
 System.IO.Directory.CreateDirectory("./wwwroot/Uploads/Resumes/Profile");

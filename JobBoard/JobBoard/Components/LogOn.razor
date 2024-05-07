@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using NuGet.Protocol.Plugins
+
+@inject HttpClient Http
+
+<h1> Log On </h1>
+<br />
+
+
+<div class="form-floating mb-3">
+    <input class="form-control" id="email" style="max-width:20em;" placeholder="e-mail" autocomplete="off" type="email" name="email" required>
+    <label for="email">Email</label>
+</div>
+<br>
+<div class="form-floating mb-3">
+    <input class="form-control" id="pwd" style="max-width:20em;" placeholder="password" autocomplete="off" type="password" name="pwd" required>
+    <label for="pwd">Password</label>
+</div>
+<br>
+<div class="form-floating mb-3">
+  <input class="form-control" id="pwdConf" style="max-width:20em;" placeholder="password" autocomplete="off" type="password" name="pwdConf" required>
+   <label for="pwdConf">Password Confirmation</label>
+</div>
+<br>
+<input class="form-check-input" type="checkbox" id="hiring" name="hiring" />
+<label for="hiring">I am HR at a company.</label><br><br><br>
+<input type="submit" onclick="@(()=>SendData())" class="btn btn-dark" value="Log On">
+
+@if (Message != null)
+{
+    <br />
+    <br />
+    <span style="color:red;">@Message</span>
+}
+
+@code{
+    [Parameter] public string Message { get; set; }
+
+    public async Task SendData()
+    {
+        Message = "LALALALA";
+        var postBody = new
+        {
+            Email = "email",
+            Pwd = "pwd",
+            PwdConf = "pwd_conf"
+        };
+
+        var response = await Http.PostAsJsonAsync("https://localhost:7037/User/LogOn", postBody);
+    }
+
+}

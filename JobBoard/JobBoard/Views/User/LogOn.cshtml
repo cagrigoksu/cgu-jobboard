@@ -1,38 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-<h1> Log On </h1>
-<br />
-@* <form method="post" asp-controller="Home" asp-action="LogOn"> *@
-    @using (Html.BeginForm("LogOn", "User", FormMethod.Post))
-    {
-        <div class="form-floating mb-3">
-            <input class="form-control" id="email" style="max-width:20em;" placeholder="e-mail" autocomplete="off" type="email" name="email" required>
-            <label for="email">Email</label>
-        </div>
-        <br>
-        <div class="form-floating mb-3">
-            <input class="form-control" id="pwd" style="max-width:20em;" placeholder="password" autocomplete="off" type="password" name="pwd" required>
-            <label for="pwd">Password</label>
-        </div>
-        <br>
-        <div class="form-floating mb-3">
-        <input class="form-control" id="pwdConf" style="max-width:20em;" placeholder="password" autocomplete="off" type="password" name="pwdConf" required>
-        <label for="pwdConf">Password Confirmation</label>
-        </div>
-    <br>
-    <input class="form-check-input" type="checkbox" id="hiring" name="hiring" />
-    <label for="hiring">I am HR at a company.</label><br><br><br>
-    <input type="submit" class="btn btn-dark" value="Log On">
-    }
-@if (ViewBag.Message != null)
-{
-    <br />
-    <br />
-    <span style="color:red;">@ViewBag.Message</span>
-}
-
-@* </form> *@
-
+﻿@using JobBoard.Components
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+<h1>Blazor</h1>
+<component type="typeof(LogOn)" render-mode="ServerPrerendered"/>
